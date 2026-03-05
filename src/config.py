@@ -1,6 +1,7 @@
 from .position import Position
 from .utils import bool_from_string, is_pos_in_boundaries
 from enum import Enum
+from typing import Any
 
 
 class InvalidConfiguration(Exception):
@@ -70,9 +71,26 @@ class Configuration:
                         f"Missing parameters in config file: {needed_val}"
                     )
 
+                self.__validity_check()
+
         except Exception as e:
             print(f"Error preparing maze configuration: {e}")
             exit(1)
 
-    def get(self, parameter: ConfigValues) -> dict:
+    def get(self, parameter: ConfigValues) -> Any:
         return self.__config[parameter.value]
+
+    def __validity_check(self):
+        entry: Position = self.get(ConfigValues.ENTRY)
+        exitt: Position = self.get(ConfigValues.EXIT)
+
+        if not entry.get_x() in range(0, self.get(ConfigValues.WIDTH)):
+            raise InvalidConfiguration("Invalid Entry: Out of bounds!")
+        if not entry.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+            raise InvalidConfiguration("Invalid Entry: Out of bounds!")
+
+        if not exitt.get_x() in range(0, self.get(ConfigValues.WIDTH)):
+            raise InvalidConfiguration("Invalid Exit: Out of bounds!")
+
+        if not exitt.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+            raise InvalidConfiguration("Invalid Exit: Out of bounds!")
