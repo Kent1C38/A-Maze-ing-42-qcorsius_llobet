@@ -1,5 +1,5 @@
 from .position import Position
-from .utils import bool_from_string, is_pos_in_boundaries
+from .utils import bool_from_string
 from enum import Enum
 from typing import Any
 
