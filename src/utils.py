@@ -6,3 +6,11 @@ def bool_from_string(string: str):
             return False
         case _:
             raise ValueError(f"Invalid boolean: {string}")
+
+
+def is_pos_valid(x: int, y: int, bounds: tuple[int, int]) -> bool:
+    if x not in range(0, bounds[0]):
+        return False
+    if y not in range(0, bounds[1]):
+        return False
+    return True
