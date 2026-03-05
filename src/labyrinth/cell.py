@@ -9,8 +9,8 @@ class Facing(Enum):
 
 
 class Cell:
-    def __init__(self, north: bool, south: bool,
-                 west: bool, east: bool):
+    def __init__(self, north: bool, east: bool,
+                 south: bool, west: bool):
         value = 0b0000
         if north:
             value = value + Facing.NORTH.value
@@ -21,18 +21,21 @@ class Cell:
         if west:
             value = value + Facing.WEST.value
 
-        self.walls = value
+        self.__walls = value
 
     def wall_request(self, face: Facing) -> bool:
         match face:
             case Facing.NORTH:
-                return self.walls & Facing.NORTH.value == Facing.NORTH.value
+                return self.__walls & Facing.NORTH.value == Facing.NORTH.value
 
             case Facing.EAST:
-                return self.walls & Facing.EAST.value == Facing.EAST.value
+                return self.__walls & Facing.EAST.value == Facing.EAST.value
 
             case Facing.SOUTH:
-                return self.walls & Facing.SOUTH.value == Facing.SOUTH.value
+                return self.__walls & Facing.SOUTH.value == Facing.SOUTH.value
 
             case Facing.WEST:
-                return self.walls & Facing.WEST.value == Facing.WEST.value
+                return self.__walls & Facing.WEST.value == Facing.WEST.value
+
+    def get_active_walls(self) -> int:
+        return self.__walls

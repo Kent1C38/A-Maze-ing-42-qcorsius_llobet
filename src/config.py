@@ -1,5 +1,5 @@
 from .position import Position
-from .utils import bool_from_string
+from .utils import bool_from_string, is_pos_valid
 from enum import Enum
 from typing import Any
 
@@ -84,13 +84,10 @@ class Configuration:
         entry: Position = self.get(ConfigValues.ENTRY)
         exitt: Position = self.get(ConfigValues.EXIT)
 
-        if not entry.get_x() in range(0, self.get(ConfigValues.WIDTH)):
-            raise InvalidConfiguration("Invalid Entry: Out of bounds!")
-        if not entry.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+        bounds = (self.get(ConfigValues.WIDTH), self.get(ConfigValues.HEIGHT))
+
+        if not is_pos_valid(entry.get_x(), entry.get_y(), bounds):
             raise InvalidConfiguration("Invalid Entry: Out of bounds!")
 
-        if not exitt.get_x() in range(0, self.get(ConfigValues.WIDTH)):
-            raise InvalidConfiguration("Invalid Exit: Out of bounds!")
-
-        if not exitt.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+        if not is_pos_valid(exitt.get_x(), exitt.get_y(), bounds):
             raise InvalidConfiguration("Invalid Exit: Out of bounds!")
