@@ -1,39 +1,108 @@
 #!/usr/bin/python3
 
-class Visualizer:
-    @staticmethod
-    def translate(map: str, w: int, h: int) -> list[list[str]]:
-        lst: list[list[str]] = [[" " for x in range(w * 3 + 2)]
-                                for y in range(h * 2 + 1)]
+class Map:
+    def __init__(self: "Map", width: int, height: int) -> None:
+        self.__width = width
+        self.__height = height
+        self.__map = [[" " for _ in range(width * 3 + 2)]
+                      for _ in range(height * 2 + 1)]
+
+    def get_width(self: "Map") -> int:
+        return self.__width
+
+    def get_height(self: "Map") -> int:
+        return self.__height
+
+    def add_cell(self: "Map", x: int, y: int, cell: str) -> None:
+        self.__map[y * 2 + 1][x * 3 + 1] = cell
+        self.__map[y * 2 + 1][x * 3 + 2] = cell
+
+    def add_walls(self: "Map", walls: str) -> None:
         i: int = 0
         j: int = 0
+        block: str = "\033[89m█\033[0m"
 
-        for char in map:
+        for char in walls:
             if char == "\n":
                 j = 0
                 i += 2
                 continue
             n: int = int(char, base=16)
 
-            lst[i][j] = "█"
-            lst[i][j + 3] = "█"
-            lst[i + 2][j] = "█"
-            lst[i + 2][j + 3] = "█"
+            self.__map[i][j] = block
+            self.__map[i][j + 3] = block
+            self.__map[i + 2][j] = block
+            self.__map[i + 2][j + 3] = block
             if n & 0x1:
-                lst[i][j + 1] = "█"
-                lst[i][j + 2] = "█"
+                self.__map[i][j + 1] = block
+                self.__map[i][j + 2] = block
             if n & 0x2:
-                lst[i + 1][j + 3] = "█"
+                self.__map[i + 1][j + 3] = block
             if n & 0x4:
-                lst[i + 2][j + 1] = "█"
-                lst[i + 2][j + 2] = "█"
+                self.__map[i + 2][j + 1] = block
+                self.__map[i + 2][j + 2] = block
             if n & 0x8:
-                lst[i + 1][j] = "█"
+                self.__map[i + 1][j] = block
             j += 3
-        return lst
 
-    def from_translated_map(trans_map: list[list[str]]) -> None:
-        for row in trans_map:
+    def add_path(self: "Map", x: int, y: int, path: str) -> None:
+        x: int = x * 3
+        y: int = y * 2
+        path_char: str = "\033[90m█\033[0m"
+
+        for char in path:
+            self.__map[y + 1][x + 1] = path_char
+            self.__map[y + 1][x + 2] = path_char
+            match char:
+                case "N":
+                    self.__map[y][x + 1] = path_char
+                    self.__map[y][x + 2] = path_char
+                    y -= 2
+                case "E":
+                    self.__map[y + 1][x + 3] = path_char
+                    x += 3
+                case "S":
+                    self.__map[y + 2][x + 1] = path_char
+                    self.__map[y + 2][x + 2] = path_char
+                    y += 2
+                case "W":
+                    self.__map[y + 1][x] = path_char
+                    x -= 3
+
+    def add_entry(self: "Map", x: int, y: int) -> None:
+        entry_char: str = "\033[92m█\033[0m"
+
+        self.add_cell(x, y, entry_char)
+
+    def add_exit(self: "Map", x: int, y: int) -> None:
+        exit_char: str = "\033[93m█\033[0m"
+
+        self.add_cell(x, y, exit_char)
+
+    def add_ft(self: "Map", x: int, y: int) -> None:
+        ft_char: str = "\033[95m█\033[0m"
+
+        self.add_cell(x, y, ft_char)
+        self.add_cell(x, y + 1, ft_char)
+        self.add_cell(x, y + 2, ft_char)
+        self.add_cell(x + 1, y + 2, ft_char)
+        self.add_cell(x + 2, y + 2, ft_char)
+        self.add_cell(x + 2, y + 3, ft_char)
+        self.add_cell(x + 2, y + 4, ft_char)
+        self.add_cell(x + 4, y, ft_char)
+        self.add_cell(x + 5, y, ft_char)
+        self.add_cell(x + 6, y, ft_char)
+        self.add_cell(x + 6, y + 1, ft_char)
+        self.add_cell(x + 6, y + 2, ft_char)
+        self.add_cell(x + 5, y + 2, ft_char)
+        self.add_cell(x + 4, y + 2, ft_char)
+        self.add_cell(x + 4, y + 3, ft_char)
+        self.add_cell(x + 4, y + 4, ft_char)
+        self.add_cell(x + 5, y + 4, ft_char)
+        self.add_cell(x + 6, y + 4, ft_char)
+
+    def visualize(self: "Map") -> None:
+        for row in self.__map:
             for char in row:
                 print(char, end="")
             print("")
@@ -41,4 +110,10 @@ class Visualizer:
 
 if __name__ == "__main__":
     pass
-#    Visualizer.from_translated_map(Visualizer.translate("9515391539551795151151153\nEBABAE812853C1412BA812812\n96A8416A84545412AC4282C2A\nC3A83816A9395384453A82D02\n96842A852AC07AAD13A8283C2\nC1296C43AAB83AA92AA8686BA\n92E853968428444682AC12902\nAC3814452FA83FFF82C52C42A\n85684117AFC6857FAC1383D06\nC53AD043AFFFAFFF856AA8143\n91441294297FAFD501142C6BA\nAA912AC3843FAFFF82856D52A\n842A8692A92B8517C4451552A\n816AC384468285293917A9542\nC416928513C443A828456C3BA\n91416AA92C393A82801553AAA\nA81292AA814682C6A8693C6AA\nA8442C6C2C1168552C16A9542\n86956951692C1455416928552\nC545545456C54555545444556", 25, 20))
+    map: Map = Map(25, 20)
+    map.add_walls("9515391539551795151151153\nEBABAE812853C1412BA812812\n96A8416A84545412AC4282C2A\nC3A83816A9395384453A82D02\n96842A852AC07AAD13A8283C2\nC1296C43AAB83AA92AA8686BA\n92E853968428444682AC12902\nAC3814452FA83FFF82C52C42A\n85684117AFC6857FAC1383D06\nC53AD043AFFFAFFF856AA8143\n91441294297FAFD501142C6BA\nAA912AC3843FAFFF82856D52A\n842A8692A92B8517C4451552A\n816AC384468285293917A9542\nC416928513C443A828456C3BA\n91416AA92C393A82801553AAA\nA81292AA814682C6A8693C6AA\nA8442C6C2C1168552C16A9542\n86956951692C1455416928552\nC545545456C54555545444556")
+    map.add_path(1, 1, "SWSESWSESWSSSEESEEENEESESEESSSEEESSSEEENNENEE")
+    map.add_entry(1, 1)
+    map.add_exit(19, 14)
+    map.add_ft(9, 7)
+    map.visualize()
