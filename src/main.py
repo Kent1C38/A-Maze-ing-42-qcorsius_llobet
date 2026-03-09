@@ -1,6 +1,5 @@
 from sys import argv
 from .config import Configuration
-from .labyrinth import Cell
 from .labyrinth import Labyrinth
 
 if __name__ == "__main__":
@@ -11,7 +10,8 @@ if __name__ == "__main__":
         config = Configuration(config_path)
 
         lab = Labyrinth(config)
-        lab.set_cell(0, 0, Cell(True, False, False, True))
-        lab.set_cell(1, 0, Cell(False, False, False, True))
-        lab.set_cell(1, 1, Cell(True, True, True, False))
+        print(lab.convert_to_hex_str())
+
+        lab.generate()
+
         print(lab.convert_to_hex_str())

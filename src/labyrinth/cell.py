@@ -22,20 +22,21 @@ class Cell:
             value = value + Facing.WEST.value
 
         self.__walls = value
+        self.is_visited = False
 
     def wall_request(self, face: Facing) -> bool:
-        match face:
+        return bool(self.__walls & face.value)
+
+    def break_wall(self, facing: Facing) -> None:
+        match facing:
             case Facing.NORTH:
-                return self.__walls & Facing.NORTH.value == Facing.NORTH.value
-
-            case Facing.EAST:
-                return self.__walls & Facing.EAST.value == Facing.EAST.value
-
-            case Facing.SOUTH:
-                return self.__walls & Facing.SOUTH.value == Facing.SOUTH.value
-
+                self.__walls -= Facing.NORTH.value
             case Facing.WEST:
-                return self.__walls & Facing.WEST.value == Facing.WEST.value
+                self.__walls -= Facing.WEST.value
+            case Facing.SOUTH:
+                self.__walls -= Facing.SOUTH.value
+            case Facing.EAST:
+                self.__walls -= Facing.EAST.value
 
     def get_active_walls(self) -> int:
         return self.__walls
