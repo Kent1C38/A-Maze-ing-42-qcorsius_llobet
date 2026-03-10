@@ -7,8 +7,8 @@ from random import Random
 class Labyrinth:
     def __init__(self, config: Configuration, debug: bool = False):
         self.__maze = [[Cell(True, True, True, True)
-                        for _ in range(config.get(ConfigValues.HEIGHT))]
-                       for _ in range(config.get(ConfigValues.WIDTH))]
+                        for _ in range(config.get(ConfigValues.WIDTH))]
+                       for _ in range(config.get(ConfigValues.HEIGHT))]
         self.__config = config
         self.__bounds = (self.__config.get(ConfigValues.WIDTH),
                          self.__config.get(ConfigValues.HEIGHT))
@@ -19,7 +19,7 @@ class Labyrinth:
 
     def set_cell(self, x: int, y: int, cell: Cell):
         if is_pos_valid(x, y, self.__bounds):
-            self.__maze[x][y] = cell
+            self.__maze[y][x] = cell
         else:
             raise Exception(
                 f"Could not set cell at ({x},{y}): invalid position!")
@@ -65,7 +65,7 @@ class Labyrinth:
             max_y = max(max_y, cy)
 
         # Compter seulement les cellules avec 2 murs cassés ou plus
-            cell = grid[cx][cy]
+            cell = grid[cy][cx]
             open_walls = 4 - cell.get_active_walls().bit_count()
             if open_walls < 2:
                 continue  # c'est un couloir étroit, ne bloque pas
@@ -104,11 +104,11 @@ class Labyrinth:
         self.crawl(start.get_x(), start.get_y(), rng)
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
-        self.get()[x][y].is_visited = True
+        self.get()[y][x].is_visited = True
         if self.debug:
             print(f"Visiting cell ({x},{y})")
 
-        directions = [f for f in Facing if self.get()[x][y].wall_request(f)]
+        directions = [f for f in Facing if self.get()[y][x].wall_request(f)]
         while directions:
             f = directions.pop(rng.randint(0, len(directions) - 1))
             nx, ny = x + f.dx, y + f.dy
@@ -118,7 +118,7 @@ class Labyrinth:
                     print(f"  Skipping ({nx},{ny}): out of bounds")
                 continue
 
-            if self.get()[nx][ny].is_visited:
+            if self.get()[ny][nx].is_visited:
                 if self.debug:
                     print(f"  Skipping ({nx},{ny}): already visited")
                 continue
@@ -128,8 +128,8 @@ class Labyrinth:
                     print(f"  Skipping ({nx},{ny}): would exceed room limit")
                 continue
 
-            self.get()[x][y].break_wall(f)
-            self.get()[nx][ny].break_wall({
+            self.get()[y][x].break_wall(f)
+            self.get()[ny][nx].break_wall({
                 Facing.NORTH: Facing.SOUTH,
                 Facing.SOUTH: Facing.NORTH,
                 Facing.WEST: Facing.EAST,
