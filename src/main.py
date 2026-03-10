@@ -9,7 +9,7 @@ if __name__ == "__main__":
         config_path = argv[1]
         config = Configuration(config_path)
 
-        lab = Labyrinth(config)
+        lab = Labyrinth(config, debug=True)
         print(lab.convert_to_hex_str())
 
         lab.generate()
