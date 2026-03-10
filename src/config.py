@@ -16,6 +16,7 @@ class ConfigValues(Enum):
     EXIT = "exit"
     OUTPUT_FILE = "output_file"
     PERFECT = "perfect"
+    SEED = "seed"
 
 
 class Configuration:
@@ -26,8 +27,7 @@ class Configuration:
             with open(config_file_path, "r") as config_file:
 
                 current_line = 1
-                needed_val = ["width", "height", "entry", "exit",
-                              "output_file", "perfect"]
+                needed_val = [conf_val.value for conf_val in ConfigValues]
 
                 for line in config_file.readlines():
                     clean_line = line.replace('\n', '')
@@ -41,7 +41,7 @@ class Configuration:
                         val = splited[1]
 
                         match key.lower():
-                            case "width" | "height":
+                            case "width" | "height" | "seed":
                                 self.__config[key.lower()] = int(val)
                                 needed_val.remove(key.lower())
 
