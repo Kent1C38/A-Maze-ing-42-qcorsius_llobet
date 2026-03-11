@@ -1,5 +1,5 @@
 from .position import Position
-from .utils import bool_from_string
+from .utils import bool_from_string, is_pos_valid
 from enum import Enum
 from typing import Any
 
@@ -16,6 +16,7 @@ class ConfigValues(Enum):
     EXIT = "exit"
     OUTPUT_FILE = "output_file"
     PERFECT = "perfect"
+    SEED = "seed"
 
 
 class Configuration:
@@ -26,8 +27,7 @@ class Configuration:
             with open(config_file_path, "r") as config_file:
 
                 current_line = 1
-                needed_val = ["width", "height", "entry", "exit",
-                              "output_file", "perfect"]
+                needed_val = [conf_val.value for conf_val in ConfigValues]
 
                 for line in config_file.readlines():
                     clean_line = line.replace('\n', '')
@@ -41,7 +41,7 @@ class Configuration:
                         val = splited[1]
 
                         match key.lower():
-                            case "width" | "height":
+                            case "width" | "height" | "seed":
                                 self.__config[key.lower()] = int(val)
                                 needed_val.remove(key.lower())
 
@@ -84,13 +84,10 @@ class Configuration:
         entry: Position = self.get(ConfigValues.ENTRY)
         exitt: Position = self.get(ConfigValues.EXIT)
 
-        if not entry.get_x() in range(0, self.get(ConfigValues.WIDTH)):
-            raise InvalidConfiguration("Invalid Entry: Out of bounds!")
-        if not entry.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+        bounds = (self.get(ConfigValues.WIDTH), self.get(ConfigValues.HEIGHT))
+
+        if not is_pos_valid(entry.get_x(), entry.get_y(), bounds):
             raise InvalidConfiguration("Invalid Entry: Out of bounds!")
 
-        if not exitt.get_x() in range(0, self.get(ConfigValues.WIDTH)):
-            raise InvalidConfiguration("Invalid Exit: Out of bounds!")
-
-        if not exitt.get_y() in range(0, self.get(ConfigValues.HEIGHT)):
+        if not is_pos_valid(exitt.get_x(), exitt.get_y(), bounds):
             raise InvalidConfiguration("Invalid Exit: Out of bounds!")
