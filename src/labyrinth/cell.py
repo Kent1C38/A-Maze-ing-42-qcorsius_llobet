@@ -2,49 +2,43 @@ from enum import Enum
 
 
 class Facing(Enum):
-    NORTH = (0b1000, (0, -1))
-    EAST = (0b0100, (1, 0))
-    SOUTH = (0b0010, (0, 1))
-    WEST = (0b0001, (-1, 0))
+    NORTH = (0b0001, (0, -1))
+    EAST = (0b0010, (1, 0))
+    SOUTH = (0b0100, (0, 1))
+    WEST = (0b1000, (-1, 0))
 
     @property
-    def dx(self):
+    def bin_value(self) -> int:
+        return self.value[0]
+
+    @property
+    def dx(self) -> int:
         return self.value[1][0]
 
     @property
-    def dy(self):
+    def dy(self) -> int:
         return self.value[1][1]
 
 
 class Cell:
-    def __init__(self, north: bool, east: bool,
-                 south: bool, west: bool):
-        value = 0b0000
-        if north:
-            value = value + Facing.NORTH.value[0]
-        if east:
-            value = value + Facing.EAST.value[0]
-        if south:
-            value = value + Facing.SOUTH.value[0]
-        if west:
-            value = value + Facing.WEST.value[0]
-
-        self.__walls = value
+    def __init__(self):
+        self.__walls = 0b1111
         self.is_visited = False
+        self.is_unbreakable = False
+
+    def set_unbreakable(self, is_unbreakable: bool) -> None:
+        self.is_unbreakable = is_unbreakable
 
     def wall_request(self, face: Facing) -> bool:
-        return bool(self.__walls & face.value[0])
+        return bool(self.__walls & face.bin_value)
 
     def break_wall(self, facing: Facing) -> None:
-        match facing:
-            case Facing.NORTH:
-                self.__walls -= Facing.NORTH.value[0]
-            case Facing.WEST:
-                self.__walls -= Facing.WEST.value[0]
-            case Facing.SOUTH:
-                self.__walls -= Facing.SOUTH.value[0]
-            case Facing.EAST:
-                self.__walls -= Facing.EAST.value[0]
+        self.__walls -= facing.bin_value
 
     def get_active_walls(self) -> int:
         return self.__walls
+
+    def reset(self) -> None:
+        self.__walls = 0b1111
+        self.is_visited = False
+        self.is_unbreakable = False

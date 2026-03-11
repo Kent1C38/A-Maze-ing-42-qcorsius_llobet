@@ -71,11 +71,24 @@ class Configuration:
                         f"Missing parameters in config file: {needed_val}"
                     )
 
-                self.__validity_check()
+            if (self.get(ConfigValues.HEIGHT) *
+                    self.get(ConfigValues.WIDTH)) > 47*48:
+                raise InvalidConfiguration("Invalid size: cannot excede 48x47"
+                                           + " or 47x48")
+
+            if (self.get(ConfigValues.WIDTH) <= 0
+                    or self.get(ConfigValues.HEIGHT) <= 0):
+                raise InvalidConfiguration("Invalid dimenstions: width and" +
+                                           " height cannot be 0 or negative")
+
+            self.__validity_check()
 
         except Exception as e:
             print(f"Error preparing maze configuration: {e}")
             exit(1)
+
+    def replace_seed(self, new_seed: int) -> None:
+        self.__config[ConfigValues.SEED.value] = new_seed
 
     def get(self, parameter: ConfigValues) -> Any:
         return self.__config[parameter.value]

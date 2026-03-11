@@ -6,23 +6,15 @@ from random import Random
 
 class Labyrinth:
     def __init__(self, config: Configuration, debug: bool = False):
-        self.__maze = [[Cell(True, True, True, True)
+        self.__maze = [[Cell()
                         for _ in range(config.get(ConfigValues.WIDTH))]
                        for _ in range(config.get(ConfigValues.HEIGHT))]
         self.__config = config
         self.__bounds = (self.__config.get(ConfigValues.WIDTH),
                          self.__config.get(ConfigValues.HEIGHT))
-        self.debug = debug
 
     def get(self) -> list[list[Cell]]:
         return self.__maze
-
-    def set_cell(self, x: int, y: int, cell: Cell):
-        if is_pos_valid(x, y, self.__bounds):
-            self.__maze[y][x] = cell
-        else:
-            raise Exception(
-                f"Could not set cell at ({x},{y}): invalid position!")
 
     def convert_to_hex_str(self) -> str:
         string = ""
@@ -34,7 +26,7 @@ class Labyrinth:
             string += "\n"
         return string
 
-    def would_excede_room_limit(self, x: int, y: int, facing: Facing):
+    def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
         grid = self.get()
         target_x = x + facing.dx
         target_y = y + facing.dy
@@ -64,13 +56,11 @@ class Labyrinth:
             min_y = min(min_y, cy)
             max_y = max(max_y, cy)
 
-        # Compter seulement les cellules avec 2 murs cassés ou plus
             cell = grid[cy][cx]
             open_walls = 4 - cell.get_active_walls().bit_count()
             if open_walls < 2:
-                continue  # c'est un couloir étroit, ne bloque pas
+                continue
 
-        # Si la pièce devient trop grande
             if len(visited) > 6:
                 return True
 
@@ -95,18 +85,17 @@ class Labyrinth:
         return False
 
     def generate(self) -> bool:
+        self.reset()
+        self.new_rand_seed()
         rng = Random(self.__config.get(ConfigValues.SEED))
+
         from ..position import Position
         start: Position = self.__config.get(ConfigValues.ENTRY)
-        if self.debug:
-            print(f"Starting labyrinth generation at ({
-                  start.get_x()},{start.get_y()})")
+
         self.crawl(start.get_x(), start.get_y(), rng)
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
-        if self.debug:
-            print(f"Visiting cell ({x},{y})")
 
         directions = [f for f in Facing if self.get()[y][x].wall_request(f)]
         while directions:
@@ -114,18 +103,12 @@ class Labyrinth:
             nx, ny = x + f.dx, y + f.dy
 
             if not is_pos_valid(nx, ny, self.__bounds):
-                if self.debug:
-                    print(f"  Skipping ({nx},{ny}): out of bounds")
                 continue
 
             if self.get()[ny][nx].is_visited:
-                if self.debug:
-                    print(f"  Skipping ({nx},{ny}): already visited")
                 continue
 
             if self.would_excede_room_limit(x, y, f):
-                if self.debug:
-                    print(f"  Skipping ({nx},{ny}): would exceed room limit")
                 continue
 
             self.get()[y][x].break_wall(f)
@@ -136,10 +119,20 @@ class Labyrinth:
                 Facing.EAST: Facing.WEST
             }[f])
 
-            if self.debug:
-                print(f"  Breaking wall {
-                      f.name} between ({x},{y}) and ({nx},{ny})")
-
             self.crawl(nx, ny, rng)
 
         return True
+
+    def new_rand_seed(self) -> None:
+        rand = Random(self.__config.get(ConfigValues.SEED))
+        self.__config.replace_seed(rand.randint(0, 100000))
+
+    def reset_visited(self) -> None:
+        for line in self.get():
+            for cell in line:
+                cell.is_visited = True
+
+    def reset(self) -> None:
+        for line in self.get():
+            for cell in line:
+                cell.reset()
