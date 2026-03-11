@@ -10,8 +10,5 @@ if __name__ == "__main__":
         config = Configuration(config_path)
 
         lab = Labyrinth(config, debug=False)
-        print(lab.convert_to_hex_str())
 
         lab.generate()
-
-        print(lab.convert_to_hex_str())
