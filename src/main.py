@@ -1,6 +1,7 @@
 from sys import argv
-from .config import Configuration
+from .config import Configuration, ConfigValues
 from .labyrinth import Labyrinth
+from visualizer import Map
 
 if __name__ == "__main__":
     if len(argv) <= 1:
@@ -12,3 +13,9 @@ if __name__ == "__main__":
         lab = Labyrinth(config, debug=False)
 
         lab.generate()
+
+        visu = Map(config.get(ConfigValues.WIDTH),
+                   config.get(ConfigValues.HEIGHT))
+
+        visu.add_walls(lab.convert_to_hex_str())
+        visu.visualize()

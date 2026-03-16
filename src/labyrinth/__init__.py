@@ -26,6 +26,34 @@ class Labyrinth:
             string += "\n"
         return string
 
+    def gen_ft_logo(self):
+        x_center = self.__config.get(ConfigValues.WIDTH) // 2
+        y_center = self.__config.get(ConfigValues.HEIGHT) // 2
+        from ..position import Position as Pos
+        start = Pos(x_center - 4, y_center - 3)
+        logo_pos = [(start.get_x(), start.get_y()),
+                    (start.get_x(), start.get_y() + 1),
+                    (start.get_x(), start.get_y() + 2),
+                    (start.get_x() + 1, start.get_y() + 2),
+                    (start.get_x() + 2, start.get_y() + 2),
+                    (start.get_x() + 2, start.get_y() + 3),
+                    (start.get_x() + 2, start.get_y() + 4),
+
+                    (start.get_x() + 4, start.get_y()),
+                    (start.get_x() + 5, start.get_y()),
+                    (start.get_x() + 6, start.get_y()),
+                    (start.get_x() + 6, start.get_y() + 1),
+                    (start.get_x() + 6, start.get_y() + 2),
+                    (start.get_x() + 5, start.get_y() + 2),
+                    (start.get_x() + 4, start.get_y() + 2),
+                    (start.get_x() + 4, start.get_y() + 3),
+                    (start.get_x() + 4, start.get_y() + 4),
+                    (start.get_x() + 5, start.get_y() + 4),
+                    (start.get_x() + 6, start.get_y() + 4)]
+
+        for p in logo_pos:
+            self.get()[p[1]][p[0]].set_unbreakable(True)
+
     def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
         grid = self.get()
         target_x = x + facing.dx
@@ -89,6 +117,8 @@ class Labyrinth:
         self.new_rand_seed()
         rng = Random(self.__config.get(ConfigValues.SEED))
 
+        self.gen_ft_logo()
+
         from ..position import Position
         start: Position = self.__config.get(ConfigValues.ENTRY)
 
@@ -106,6 +136,9 @@ class Labyrinth:
                 continue
 
             if self.get()[ny][nx].is_visited:
+                continue
+
+            if self.get()[ny][nx].is_unbreakable:
                 continue
 
             if self.would_excede_room_limit(x, y, f):
