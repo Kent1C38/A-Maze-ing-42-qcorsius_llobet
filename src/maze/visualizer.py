@@ -1,11 +1,13 @@
-#!/usr/bin/python3
+from ..config import Configuration, ConfigValues
+from ..position import Position
+
 
 class Map:
-    def __init__(self: "Map", width: int, height: int) -> None:
-        self.__width = width
-        self.__height = height
-        self.__map = [[" " for _ in range(width * 3 + 2)]
-                      for _ in range(height * 2 + 1)]
+    def __init__(self: "Map", config: Configuration) -> None:
+        self.__width = config.get(ConfigValues.WIDTH)
+        self.__height = config.get(ConfigValues.HEIGHT)
+        self.__map = [[" " for _ in range(self.__width * 3 + 2)]
+                      for _ in range(self.__height * 2 + 1)]
 
     def get_width(self: "Map") -> int:
         return self.__width
@@ -69,15 +71,15 @@ class Map:
                     self.__map[y + 1][x] = path_char
                     x -= 3
 
-    def add_entry(self: "Map", x: int, y: int) -> None:
+    def add_entry(self: "Map", pos: Position) -> None:
         entry_char: str = "\033[92m█\033[0m"
 
-        self.add_cell(x, y, entry_char)
+        self.add_cell(pos.get_x(), pos.get_y(), entry_char)
 
-    def add_exit(self: "Map", x: int, y: int) -> None:
+    def add_exit(self: "Map", pos: Position) -> None:
         exit_char: str = "\033[93m█\033[0m"
 
-        self.add_cell(x, y, exit_char)
+        self.add_cell(pos.get_x(), pos.get_y(), exit_char)
 
     def add_ft(self: "Map", x: int, y: int) -> None:
         ft_char: str = "\033[95m█\033[0m"
@@ -106,14 +108,3 @@ class Map:
             for char in row:
                 print(char, end="")
             print("")
-
-
-if __name__ == "__main__":
-    pass
-    map: Map = Map(25, 20)
-    map.add_walls("9515391539551795151151153\nEBABAE812853C1412BA812812\n96A8416A84545412AC4282C2A\nC3A83816A9395384453A82D02\n96842A852AC07AAD13A8283C2\nC1296C43AAB83AA92AA8686BA\n92E853968428444682AC12902\nAC3814452FA83FFF82C52C42A\n85684117AFC6857FAC1383D06\nC53AD043AFFFAFFF856AA8143\n91441294297FAFD501142C6BA\nAA912AC3843FAFFF82856D52A\n842A8692A92B8517C4451552A\n816AC384468285293917A9542\nC416928513C443A828456C3BA\n91416AA92C393A82801553AAA\nA81292AA814682C6A8693C6AA\nA8442C6C2C1168552C16A9542\n86956951692C1455416928552\nC545545456C54555545444556")
-    map.add_path(1, 1, "SWSESWSESWSSSEESEEENEESESEESSSEEESSSEEENNENEE")
-    map.add_entry(1, 1)
-    map.add_exit(19, 14)
-    map.add_ft(9, 7)
-    map.visualize()

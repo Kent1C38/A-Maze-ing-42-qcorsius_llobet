@@ -95,12 +95,16 @@ class Configuration:
 
     def __validity_check(self):
         entry: Position = self.get(ConfigValues.ENTRY)
-        exitt: Position = self.get(ConfigValues.EXIT)
+        ext: Position = self.get(ConfigValues.EXIT)
 
         bounds = (self.get(ConfigValues.WIDTH), self.get(ConfigValues.HEIGHT))
+
+        if (entry.get_x() == ext.get_x()) and (entry.get_y() == ext.get_y()):
+            raise InvalidConfiguration("Entry and exit cannot be at the same"
+                                       "position!")
 
         if not is_pos_valid(entry.get_x(), entry.get_y(), bounds):
             raise InvalidConfiguration("Invalid Entry: Out of bounds!")
 
-        if not is_pos_valid(exitt.get_x(), exitt.get_y(), bounds):
+        if not is_pos_valid(ext.get_x(), ext.get_y(), bounds):
             raise InvalidConfiguration("Invalid Exit: Out of bounds!")

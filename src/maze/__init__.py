@@ -1,17 +1,22 @@
 from ..utils import is_pos_valid
 from ..config import Configuration, ConfigValues
 from .cell import Cell, Facing
+from .visualizer import Map
 from random import Random
 
 
-class Labyrinth:
-    def __init__(self, config: Configuration, debug: bool = False):
+class Maze:
+    def __init__(self, config: Configuration):
         self.__maze = [[Cell()
                         for _ in range(config.get(ConfigValues.WIDTH))]
                        for _ in range(config.get(ConfigValues.HEIGHT))]
         self.__config = config
         self.__bounds = (self.__config.get(ConfigValues.WIDTH),
                          self.__config.get(ConfigValues.HEIGHT))
+        self.__visualizer = Map(config)
+
+        self.__visualizer.add_entry(config.get(ConfigValues.ENTRY))
+        self.__visualizer.add_exit(config.get(ConfigValues.EXIT))
 
     def get(self) -> list[list[Cell]]:
         return self.__maze
@@ -53,6 +58,8 @@ class Labyrinth:
 
         for p in logo_pos:
             self.get()[p[1]][p[0]].set_unbreakable(True)
+
+        self.__visualizer.add_ft(start.get_x(), start.get_y())
 
     def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
         grid = self.get()
@@ -124,6 +131,8 @@ class Labyrinth:
 
         self.crawl(start.get_x(), start.get_y(), rng)
 
+        self.__visualizer.add_walls(self.convert_to_hex_str())
+
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
 
@@ -158,7 +167,7 @@ class Labyrinth:
 
     def new_rand_seed(self) -> None:
         rand = Random(self.__config.get(ConfigValues.SEED))
-        self.__config.replace_seed(rand.randint(0, 100000))
+        self.__config.replace_seed(rand.randint(0, 10000000))
 
     def reset_visited(self) -> None:
         for line in self.get():
@@ -169,3 +178,6 @@ class Labyrinth:
         for line in self.get():
             for cell in line:
                 cell.reset()
+
+    def visualize(self) -> None:
+        self.__visualizer.visualize()
