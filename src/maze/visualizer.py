@@ -1,5 +1,7 @@
-from ..config import Configuration, ConfigValues
-from ..position import Position
+from config import Configuration, ConfigValues
+from position import Position
+from enums import Color, MazeObject
+from utils import colorize
 
 
 class Map:
@@ -8,6 +10,11 @@ class Map:
         self.__height = config.get(ConfigValues.HEIGHT)
         self.__map = [[" " for _ in range(self.__width * 3 + 2)]
                       for _ in range(self.__height * 2 + 1)]
+        self.__wall_color: Color = Color.WHITE
+        self.__path_color: Color = Color.WHITE
+        self.__entry_color: Color = Color.RED
+        self.__exit_color: Color = Color.GREEN
+        self.__42_color: Color = Color.CYAN
 
     def get_width(self: "Map") -> int:
         return self.__width
@@ -22,7 +29,7 @@ class Map:
     def add_walls(self: "Map", walls: str) -> None:
         i: int = 0
         j: int = 0
-        block: str = "\033[89m█\033[0m"
+        block: str = colorize("█", self.__wall_color)
 
         for char in walls:
             if char == "\n":
@@ -50,7 +57,7 @@ class Map:
     def add_path(self: "Map", x: int, y: int, path: str) -> None:
         x: int = x * 3
         y: int = y * 2
-        path_char: str = "\033[90m█\033[0m"
+        path_char: str = colorize("█", self.__path_color)
 
         for char in path:
             self.__map[y + 1][x + 1] = path_char
@@ -72,17 +79,17 @@ class Map:
                     x -= 3
 
     def add_entry(self: "Map", pos: Position) -> None:
-        entry_char: str = "\033[92m█\033[0m"
+        entry_char: str = colorize("█", self.__entry_color)
 
         self.add_cell(pos.get_x(), pos.get_y(), entry_char)
 
     def add_exit(self: "Map", pos: Position) -> None:
-        exit_char: str = "\033[93m█\033[0m"
+        exit_char: str = colorize("█", self.__exit_color)
 
         self.add_cell(pos.get_x(), pos.get_y(), exit_char)
 
     def add_ft(self: "Map", x: int, y: int) -> None:
-        ft_char: str = "\033[95m█\033[0m"
+        ft_char: str = colorize("█", self.__42_color)
 
         self.add_cell(x, y, ft_char)
         self.add_cell(x, y + 1, ft_char)
@@ -108,3 +115,20 @@ class Map:
             for char in row:
                 print(char, end="")
             print("")
+
+    def reset(self) -> None:
+        self.__map = [[" " for _ in range(self.__width * 3 + 2)]
+                      for _ in range(self.__height * 2 + 1)]
+
+    def change_color(self, obj: MazeObject, color: Color) -> None:
+        match obj.value:
+            case "Walls":
+                self.__wall_color = color
+            case "Path":
+                self.__path_color = color
+            case "Entry":
+                self.__entry_color = color
+            case "Exit":
+                self.__exit_color = color
+            case "42":
+                self.__42_color = color

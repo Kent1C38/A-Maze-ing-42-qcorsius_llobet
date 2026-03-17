@@ -1,8 +1,11 @@
-from ..utils import is_pos_valid
-from ..config import Configuration, ConfigValues
+from utils import is_pos_valid
+from config import Configuration, ConfigValues
 from .cell import Cell, Facing
 from .visualizer import Map
 from random import Random
+from enums import Color, MazeObject
+from time import sleep
+from os import system
 
 
 class Maze:
@@ -17,6 +20,9 @@ class Maze:
 
         self.__visualizer.add_entry(config.get(ConfigValues.ENTRY))
         self.__visualizer.add_exit(config.get(ConfigValues.EXIT))
+        self.__generate: bool = False
+        self.__anim_maze: bool = False
+        self.__anim_path: bool = False
 
     def get(self) -> list[list[Cell]]:
         return self.__maze
@@ -34,7 +40,7 @@ class Maze:
     def gen_ft_logo(self):
         x_center = self.__config.get(ConfigValues.WIDTH) // 2
         y_center = self.__config.get(ConfigValues.HEIGHT) // 2
-        from ..position import Position as Pos
+        from position import Position as Pos
         start = Pos(x_center - 4, y_center - 3)
         logo_pos = [(start.get_x(), start.get_y()),
                     (start.get_x(), start.get_y() + 1),
@@ -119,19 +125,24 @@ class Maze:
 
         return False
 
-    def generate(self) -> bool:
+    def generate(self, keep_seed: bool = False) -> bool:
         self.reset()
-        self.new_rand_seed()
+        if not keep_seed:
+            self.new_rand_seed()
         rng = Random(self.__config.get(ConfigValues.SEED))
 
         self.gen_ft_logo()
 
-        from ..position import Position
+        from position import Position
         start: Position = self.__config.get(ConfigValues.ENTRY)
 
         self.crawl(start.get_x(), start.get_y(), rng)
+        self.__visualizer.add_entry(self.__config.get(ConfigValues.ENTRY))
+        self.__visualizer.add_exit(self.__config.get(ConfigValues.EXIT))
 
         self.__visualizer.add_walls(self.convert_to_hex_str())
+        self.__generate = True
+        self.gen_ft_logo()
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
@@ -161,8 +172,13 @@ class Maze:
                 Facing.EAST: Facing.WEST
             }[f])
 
+            if self.__anim_maze:
+                system("clear")
+                self.__visualizer.reset()
+                self.__visualizer.add_walls(self.convert_to_hex_str())
+                self.visualize()
+                sleep(0.01)
             self.crawl(nx, ny, rng)
-
         return True
 
     def new_rand_seed(self) -> None:
@@ -178,6 +194,34 @@ class Maze:
         for line in self.get():
             for cell in line:
                 cell.reset()
+        self.__visualizer.reset()
 
     def visualize(self) -> None:
         self.__visualizer.visualize()
+
+    def set_color(self, obj: MazeObject, color: Color) -> None:
+        self.__visualizer.change_color(obj, color)
+        if self.__generate:
+            self.generate(True)
+
+    def switch_animation_state(self, obj: MazeObject) -> None:
+        match obj.value:
+            case "Walls":
+                self.__anim_maze = not self.__anim_maze
+            case "Path":
+                self.__anim_path = not self.__anim_path
+
+    def get_animation_state(self, obj: MazeObject) -> bool:
+        match obj.value:
+            case "Walls":
+                return self.__anim_maze
+            case "Path":
+                return self.__anim_path
+            case _:
+                return None
+
+    def get_status(self) -> bool:
+        return self.__generate
+
+    def hide(self) -> None:
+        self.__generate = False
