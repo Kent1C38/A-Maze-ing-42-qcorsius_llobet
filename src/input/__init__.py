@@ -7,3 +7,6 @@ from .menus import (BaseMenu,
                     DisplayMenu,
                     AnimMenu)
 from .input import InputHandler
+
+__all__ = [BaseMenu, MainMenu, ColorMenu, InvalidOption, DisplayMenu, AnimMenu,
+           InputHandler]

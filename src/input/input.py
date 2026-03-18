@@ -3,9 +3,9 @@
 # --- IMPORTS -----------------------------------------------------------------
 
 from typing import Dict, List
-from input import BaseMenu, MainMenu, ColorMenu, DisplayMenu, AnimMenu
-from utils import colorize, bold
-from enums import Color
+from .menus import BaseMenu, MainMenu, ColorMenu, DisplayMenu, AnimMenu
+from ..utils import colorize, bold
+from ..enums import Color
 
 # --- EXCEPTIONS --------------------------------------------------------------
 

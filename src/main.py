@@ -2,11 +2,11 @@
 
 from sys import argv
 from os import system
-from config import Configuration
-from maze import Maze
-from enums import MazeObject, Color
-from input import InputHandler, InvalidOption
-from utils import colorize
+from .config import Configuration
+from .maze import Maze
+from .enums import MazeObject, Color
+from .input import InputHandler, InvalidOption
+from .utils import colorize
 
 
 def loop(lab: Maze) -> None:

@@ -1,7 +1,7 @@
-from config import Configuration, ConfigValues
-from position import Position
-from enums import Color, MazeObject
-from utils import colorize
+from ..config import Configuration, ConfigValues
+from ..position import Position
+from ..enums import Color, MazeObject
+from ..utils import colorize
 
 
 class Map:

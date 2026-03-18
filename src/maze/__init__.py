@@ -1,9 +1,10 @@
-from utils import is_pos_valid
-from config import Configuration, ConfigValues
+from ..utils import is_pos_valid
+from ..config import Configuration, ConfigValues
 from .cell import Cell, Facing
 from .visualizer import Map
 from random import Random
-from enums import Color, MazeObject
+from ..enums import Color, MazeObject
+from ..position import Position
 from time import sleep
 from os import system
 
@@ -40,8 +41,7 @@ class Maze:
     def gen_ft_logo(self):
         x_center = self.__config.get(ConfigValues.WIDTH) // 2
         y_center = self.__config.get(ConfigValues.HEIGHT) // 2
-        from position import Position as Pos
-        start = Pos(x_center - 4, y_center - 3)
+        start = Position(x_center - 4, y_center - 3)
         logo_pos = [(start.get_x(), start.get_y()),
                     (start.get_x(), start.get_y() + 1),
                     (start.get_x(), start.get_y() + 2),
@@ -133,7 +133,6 @@ class Maze:
 
         self.gen_ft_logo()
 
-        from position import Position
         start: Position = self.__config.get(ConfigValues.ENTRY)
 
         self.crawl(start.get_x(), start.get_y(), rng)

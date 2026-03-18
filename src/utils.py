@@ -1,4 +1,4 @@
-from enums import Color
+from .enums import Color
 
 
 def bool_from_string(string: str):
