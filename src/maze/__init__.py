@@ -38,7 +38,7 @@ class Maze:
             string += "\n"
         return string
 
-    def gen_ft_logo(self):
+    def gen_ft_logo(self) -> None:
         x_center = self.__config.get(ConfigValues.WIDTH) // 2
         y_center = self.__config.get(ConfigValues.HEIGHT) // 2
         start = Position(x_center - 4, y_center - 3)
@@ -136,6 +136,43 @@ class Maze:
         start: Position = self.__config.get(ConfigValues.ENTRY)
 
         self.crawl(start.get_x(), start.get_y(), rng)
+
+        if not self.__config.get(ConfigValues.PERFECT):
+            chance = 45.0
+            x, y = 0, 0
+            for y in range(self.__config.get(ConfigValues.HEIGHT)):
+                for x in range(self.__config.get(ConfigValues.WIDTH)):
+                    if rng.randint(0, 100) < chance:
+                        cell = self.get()[y][x]
+
+                        if cell.is_unbreakable:
+                            continue
+
+                        walls = [f for f in Facing if cell.wall_request(f)]
+
+                        if len(walls) == 0:
+                            continue
+
+                        di: Facing = rng.choice(walls)
+
+                        if not is_pos_valid(x + di.dx, y + di.dy,
+                                            self.__bounds):
+                            continue
+
+                        if self.get()[y + di.dy][x + di.dx].is_unbreakable:
+                            continue
+
+                        if self.would_excede_room_limit(x, y, di):
+                            continue
+
+                        self.get()[y][x].break_wall(di)
+                        self.get()[y + di.dy][x + di.dx].break_wall({
+                            Facing.NORTH: Facing.SOUTH,
+                            Facing.SOUTH: Facing.NORTH,
+                            Facing.EAST: Facing.WEST,
+                            Facing.WEST: Facing.EAST
+                        }[di])
+
         self.__visualizer.add_entry(self.__config.get(ConfigValues.ENTRY))
         self.__visualizer.add_exit(self.__config.get(ConfigValues.EXIT))
 

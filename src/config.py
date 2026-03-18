@@ -84,7 +84,9 @@ class Configuration:
             self.__validity_check()
 
         except Exception as e:
-            print(f"Error preparing maze configuration: {e}")
+            print(
+                f"{type(e).__name__} caught while "
+                f"preparing maze configuration: {e}")
             exit(1)
 
     def replace_seed(self, new_seed: int) -> None:
