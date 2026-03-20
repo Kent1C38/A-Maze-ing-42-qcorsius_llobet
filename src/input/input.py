@@ -3,7 +3,10 @@
 # --- IMPORTS -----------------------------------------------------------------
 
 from typing import Dict, List
-from .menus import BaseMenu, MainMenu, ColorMenu, DisplayMenu, AnimMenu
+from time import sleep
+
+from .menus import (BaseMenu, MainMenu, ColorMenu, DisplayMenu, AnimMenu,
+                    OptionsMenu, MazeMenu)
 from ..utils import colorize, bold
 from ..enums import Color
 
@@ -22,10 +25,9 @@ class InputHandler:
         "Main": MainMenu("Main Menu", [
             f"1 ║ {colorize('GENERATE MAZE', Color.WHITE)}",
             f"2 ║ {colorize('SOLVE MAZE', Color.WHITE)}",
-            f"3 ║ {colorize('UNLOAD MAZE', Color.YELLOW)}",
-            f"4 ║ {colorize('COLOR OPTIONS', Color.WHITE)}",
-            f"5 ║ {colorize('ANIMATION OPTIONS', Color.WHITE)}",
-            f"6 ║ {colorize('EXIT', Color.RED)}",
+            f"3 ║ {colorize('ERASE MAZE', Color.YELLOW)}",
+            f"4 ║ {colorize('OPTIONS', Color.WHITE)}",
+            f"0 ║ {colorize('EXIT', Color.RED)}",
         ]),
         "Color": ColorMenu("Color Menu", [
             f"1 ║ {colorize('GRAY', Color.DARK_GRAY)}",
@@ -36,21 +38,36 @@ class InputHandler:
             f"6 ║ {colorize('PURPLE', Color.PURPLE)}",
             f"7 ║ {colorize('CYAN', Color.CYAN)}",
             f"8 ║ {colorize('WHITE', Color.WHITE)}",
-            f"9 ║ {colorize('GO BACK', Color.RED)}",
+            f"0 ║ {colorize('GO BACK', Color.RED)}",
         ]),
         "Animation": AnimMenu("Animation Menu", [
             f"1 ║ MAZE ANIMATION: {colorize('OFF', Color.RED)}",
             f"2 ║ PATH ANIMATION: {colorize('OFF', Color.RED)}",
-            f"3 ║ {colorize('GO BACK', Color.RED)}",
+            f"0 ║ {colorize('GO BACK', Color.RED)}",
         ]),
-        "Display": DisplayMenu("Display Menu", [
+        "Display": DisplayMenu("Color Menu", [
             f"1 ║ {colorize('WALLS', Color.WHITE)}",
             f"2 ║ {colorize('PATH', Color.WHITE)}",
             f"3 ║ {colorize('ENTRY', Color.WHITE)}",
             f"4 ║ {colorize('EXIT', Color.WHITE)}",
             f"5 ║ {colorize('42 LOGO', Color.WHITE)}",
-            f"6 ║ {colorize('GO BACK', Color.RED)}",
+            f"0 ║ {colorize('GO BACK', Color.RED)}",
         ]),
+        "Options": OptionsMenu("Options Menu", [
+            f"1 ║ {colorize('MAZE CONFIGURATION', Color.WHITE)}",
+            f"2 ║ {colorize('COLOR OPTIONS', Color.WHITE)}",
+            f"3 ║ {colorize('ANIMATION OPTIONS', Color.WHITE)}",
+            f"0 ║ {colorize('GO BACK', Color.RED)}",
+        ]),
+        "Maze": MazeMenu("Maze Config", [
+            f"1 ║ {colorize('WIDTH: 20', Color.WHITE)}",
+            f"2 ║ {colorize('HEIGHT: 15', Color.WHITE)}",
+            f"3 ║ {colorize('ENTRY: [5, 4]', Color.WHITE)}",
+            f"4 ║ {colorize('EXIT: [19, 14]', Color.WHITE)}",
+            f"5 ║ {colorize('PERFECT', Color.WHITE)}",
+            f"6 ║ {colorize('SEED: 7852486468', Color.WHITE)}",
+            f"0 ║ {colorize('GO BACK', Color.RED)}",
+        ])
     }
     __opened: BaseMenu = __menus.get("Main")
 
@@ -76,7 +93,11 @@ class InputHandler:
 ║ ERROR: INVALID OPTION. PLEASE CHOOSE A VALID OPTION ║
 ╚═════════════════════════════════════════════════════╝"""
 
-        print(bold(colorize(err, Color.DARK_RED)))
+        err = bold(colorize(err, Color.DARK_RED))
+        for c in err:
+            print(c, end="", flush=True)
+            sleep(0.0005)
+        print("")
 
     @classmethod
     def set_opened_name(cls, name: str) -> None:

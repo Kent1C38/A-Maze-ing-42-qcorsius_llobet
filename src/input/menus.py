@@ -1,5 +1,6 @@
 from typing import List
 from abc import ABC, abstractmethod
+from time import sleep
 
 
 class InvalidOption(BaseException):
@@ -13,16 +14,15 @@ class BaseMenu(ABC):
 
     def display(self) -> None:
         menu: str = ""
-        top_bar: str = "╔═══╦═══"
-        bottom_bar: str = "╚═══╩═══"
+        top_bar: str = "╔═══╦═"
+        bottom_bar: str = "╚═══╩═"
         i: int = 1
 
         top_bar += f" {self.__name.upper()} "
-        for _ in range(20 - len(self.__name)):
+        for _ in range(22 - len(self.__name)):
             top_bar += "═"
         top_bar += "╗"
-        bottom_bar += f" {self.__name.upper()} "
-        for _ in range(20 - len(self.__name)):
+        for _ in range(24):
             bottom_bar += "═"
         bottom_bar += "╝"
         for opt in self.__options:
@@ -33,9 +33,17 @@ class BaseMenu(ABC):
             line += "║\n"
             menu += line
             i += 1
-        print(top_bar)
-        print(menu, end="")
-        print(bottom_bar)
+        for c in top_bar:
+            print(c, end="", flush=True)
+            sleep(0.0005)
+        print("")
+        for c in menu:
+            print(c, end="", flush=True)
+            sleep(0.0005)
+        for c in bottom_bar:
+            print(c, end="", flush=True)
+            sleep(0.0005)
+        print("")
 
     def set_name(self, name: str) -> None:
         self.__name = name
@@ -64,10 +72,8 @@ class MainMenu(BaseMenu):
             case 3:
                 return "HideMaze"
             case 4:
-                return "GoToColorOptions"
-            case 5:
-                return "GoToAnimationOptions"
-            case 6:
+                return "GoToOptions"
+            case 0:
                 return "Exit"
             case _:
                 raise InvalidOption
@@ -98,7 +104,7 @@ class ColorMenu(BaseMenu):
                 return "SetCyan"
             case 8:
                 return "SetWhite"
-            case 9:
+            case 0:
                 return "GoBackToDisplay"
             case _:
                 raise InvalidOption
@@ -123,8 +129,8 @@ class DisplayMenu(BaseMenu):
                 return "ChangeExit"
             case 5:
                 return "Change42"
-            case 6:
-                return "GoBackToMain"
+            case 0:
+                return "GoToOptions"
             case _:
                 raise InvalidOption
 
@@ -142,7 +148,55 @@ class AnimMenu(BaseMenu):
                 return "SwitchAnimMaze"
             case 2:
                 return "SwitchAnimPath"
+            case 0:
+                return "GoToOptions"
+            case _:
+                raise InvalidOption
+
+
+class MazeMenu(BaseMenu):
+    def prompt(self) -> str:
+        res: int
+
+        try:
+            res = int(input("Choose an option: "))
+        except (ValueError, TypeError):
+            raise InvalidOption
+        match res:
+            case 1:
+                return "ChangeWidth"
+            case 2:
+                return "ChangeHeight"
             case 3:
+                return "ChangeEntry"
+            case 4:
+                return "ChangeExit"
+            case 5:
+                return "ChangePerfect"
+            case 6:
+                return "ChangeSeed"
+            case 0:
+                return "GoToOptions"
+            case _:
+                raise InvalidOption
+
+
+class OptionsMenu(BaseMenu):
+    def prompt(self) -> str:
+        res: int
+
+        try:
+            res = int(input("Choose an option: "))
+        except (ValueError, TypeError):
+            raise InvalidOption
+        match res:
+            case 1:
+                return "GoToMazeOptions"
+            case 2:
+                return "GoToColorOptions"
+            case 3:
+                return "GoToAnimationOptions"
+            case 0:
                 return "GoBackToMain"
             case _:
                 raise InvalidOption

@@ -126,6 +126,22 @@ def loop(lab: Maze) -> None:
                     f"║ 2 ║ PATH ANIMATION: {colorize(s_path, c_path)}     ║\n"
                     f"║ 3 ║ {colorize('GO BACK', Color.RED)}                 "
                 ])
+            case "GoToOptions":
+                InputHandler.goto("Options")
+            case "GoToMazeOptions":
+                InputHandler.goto("Maze")
+            case "ChangeWidth":
+                pass
+            case "ChangeHeight":
+                pass
+            case "ChangeEntry":
+                pass
+            case "ChangeExit":
+                pass
+            case "ChangePerfect":
+                pass
+            case "ChangeSeed":
+                pass
             case "Exit":
                 system("clear")
                 exit(0)

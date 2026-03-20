@@ -12,8 +12,8 @@ class Map:
                       for _ in range(self.__height * 2 + 1)]
         self.__wall_color: Color = Color.WHITE
         self.__path_color: Color = Color.WHITE
-        self.__entry_color: Color = Color.RED
-        self.__exit_color: Color = Color.GREEN
+        self.__entry_color: Color = Color.GREEN
+        self.__exit_color: Color = Color.RED
         self.__42_color: Color = Color.CYAN
 
     def get_width(self: "Map") -> int:

@@ -5,8 +5,10 @@ from .menus import (BaseMenu,
                     ColorMenu,
                     InvalidOption,
                     DisplayMenu,
-                    AnimMenu)
+                    AnimMenu,
+                    OptionsMenu,
+                    MazeMenu,)
 from .input import InputHandler
 
 __all__ = [BaseMenu, MainMenu, ColorMenu, InvalidOption, DisplayMenu, AnimMenu,
-           InputHandler]
+           InputHandler, OptionsMenu, MazeMenu]

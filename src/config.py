@@ -95,6 +95,16 @@ class Configuration:
     def get(self, parameter: ConfigValues) -> Any:
         return self.__config[parameter.value]
 
+    def set(self, parameter: ConfigValues, val: Any) -> bool:
+        key: str = parameter.value
+
+        try:
+            self.__config[key] = val
+            self.__validity_check()
+            return True
+        except Exception:
+            return False
+
     def __validity_check(self):
         entry: Position = self.get(ConfigValues.ENTRY)
         ext: Position = self.get(ConfigValues.EXIT)
