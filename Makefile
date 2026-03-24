@@ -16,7 +16,7 @@ install:
 	pip install $(POETRY)
 	$(POETRY) install
 
-run:
+run: install
 	$(POETRY) run $(PY) -m $(MAIN) $(CONFIG_FILE)
 
 debug:
