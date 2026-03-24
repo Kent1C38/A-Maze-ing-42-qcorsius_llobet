@@ -111,10 +111,13 @@ class Map:
         self.add_cell(x + 6, y + 4, ft_char)
 
     def visualize(self: "Map") -> None:
+        string: map = ""
+
         for row in self.__map:
             for char in row:
-                print(char, end="")
-            print("")
+                string += char
+            string += "\n"
+        print(string)
 
     def reset(self) -> None:
         self.__map = [[" " for _ in range(self.__width * 3 + 2)]
