@@ -6,8 +6,8 @@ from ..utils import colorize
 
 class Map:
     def __init__(self: "Map", config: Configuration) -> None:
-        self.__width = config.get(ConfigValues.WIDTH)
-        self.__height = config.get(ConfigValues.HEIGHT)
+        self.__width = config.width
+        self.__height = config.height
         self.__map = [[" " for _ in range(self.__width * 3 + 2)]
                       for _ in range(self.__height * 2 + 1)]
         self.__wall_color: Color = Color.WHITE
@@ -81,12 +81,12 @@ class Map:
     def add_entry(self: "Map", pos: Position) -> None:
         entry_char: str = colorize("█", self.__entry_color)
 
-        self.add_cell(pos.get_x(), pos.get_y(), entry_char)
+        self.add_cell(pos.x, pos.y, entry_char)
 
     def add_exit(self: "Map", pos: Position) -> None:
         exit_char: str = colorize("█", self.__exit_color)
 
-        self.add_cell(pos.get_x(), pos.get_y(), exit_char)
+        self.add_cell(pos.x, pos.y, exit_char)
 
     def add_ft(self: "Map", x: int, y: int) -> None:
         ft_char: str = colorize("█", self.__42_color)

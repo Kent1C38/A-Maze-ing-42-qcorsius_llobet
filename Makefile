@@ -1,5 +1,8 @@
-PY					:= python3
+PY					:= python
+MAIN				:= src.main
+CONFIG_FILE	:= config.txt
 
+POETRY			:= poetry
 FLAKE8				:= flake8
 MYPY				:= mypy
 MYPY_FLAGS			:=	--warn-return-any \
@@ -10,14 +13,14 @@ MYPY_FLAGS			:=	--warn-return-any \
 MYPY_FLAGS_STRICT	:=	--strict
 
 install:
-	pip install $(FLAKE8)
-	pip install $(MYPY)
+	pip install $(POETRY)
+	$(POETRY) install
 
 run:
-	python3 -m src.main config.txt
+	$(POETRY) run $(PY) -m $(MAIN) $(CONFIG_FILE)
 
 debug:
-	python3 -m pdb src/main.py config.txt
+	$(POETRY) run $(PY) -m pdb $(MAIN) $(CONFIG_FILE)
 
 clean:
 	rm ./__pycache__

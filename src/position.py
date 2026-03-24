@@ -1,23 +1,21 @@
-class Position:
-    def __init__(self, x: int, y: int):
-        self.__x = x
-        self.__y = y
+from pydantic import BaseModel, Field
 
-    def get_x(self) -> int:
-        return self.__x
 
-    def get_y(self) -> int:
-        return self.__y
+class Position(BaseModel):
+    x: int = Field(strict=True)
+    y: int = Field(strict=True)
 
     @staticmethod
     def from_str(string: str) -> "Position":
-        splited = string.split(',')
-        if not len(splited) == 2:
-            raise Exception(f"Invalid position: {string}")
-        else:
-            x = int(splited[0])
-            y = int(splited[1])
-            return Position(x, y)
+        try:
+            x, y = string.split(',', 1)
+            x = x.strip()
+            y = y.strip()
+
+            return Position(x=int(x), y=int(y))
+        except Exception as e:
+            raise Exception(f"Failed to create position from string {string}: "
+                            f"{e}")
 
     def __str__(self):
         return f"(x={self.get_x()}, y={self.get_y()})"

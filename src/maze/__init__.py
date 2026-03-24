@@ -1,4 +1,4 @@
-from ..utils import is_pos_valid
+from ..utils import is_pos_valid, get_42logo_cells
 from ..config import Configuration, ConfigValues
 from .cell import Cell, Facing
 from .visualizer import Map
@@ -7,20 +7,23 @@ from ..enums import Color, MazeObject
 from ..position import Position
 from time import sleep
 from os import system
+import sys
+
+sys.setrecursionlimit(10000)
 
 
 class Maze:
     def __init__(self, config: Configuration):
         self.__maze = [[Cell()
-                        for _ in range(config.get(ConfigValues.WIDTH))]
-                       for _ in range(config.get(ConfigValues.HEIGHT))]
+                        for _ in range(config.width)]
+                       for _ in range(config.height)]
         self.__config = config
-        self.__bounds = (self.__config.get(ConfigValues.WIDTH),
-                         self.__config.get(ConfigValues.HEIGHT))
+        self.__bounds = (self.__config.width,
+                         self.__config.height)
         self.__visualizer = Map(config)
 
-        self.__visualizer.add_entry(config.get(ConfigValues.ENTRY))
-        self.__visualizer.add_exit(config.get(ConfigValues.EXIT))
+        self.__visualizer.add_entry(config.entry_pos)
+        self.__visualizer.add_exit(config.exit_pos)
         self.__generate: bool = False
         self.__anim_maze: bool = False
         self.__anim_path: bool = False
@@ -39,33 +42,17 @@ class Maze:
         return string
 
     def gen_ft_logo(self) -> None:
-        x_center = self.__config.get(ConfigValues.WIDTH) // 2
-        y_center = self.__config.get(ConfigValues.HEIGHT) // 2
-        start = Position(x_center - 4, y_center - 3)
-        logo_pos = [(start.get_x(), start.get_y()),
-                    (start.get_x(), start.get_y() + 1),
-                    (start.get_x(), start.get_y() + 2),
-                    (start.get_x() + 1, start.get_y() + 2),
-                    (start.get_x() + 2, start.get_y() + 2),
-                    (start.get_x() + 2, start.get_y() + 3),
-                    (start.get_x() + 2, start.get_y() + 4),
+        x_center = self.__config.width // 2
+        y_center = self.__config.height // 2
+        start = Position(x=x_center - 3, y=y_center - 2)
 
-                    (start.get_x() + 4, start.get_y()),
-                    (start.get_x() + 5, start.get_y()),
-                    (start.get_x() + 6, start.get_y()),
-                    (start.get_x() + 6, start.get_y() + 1),
-                    (start.get_x() + 6, start.get_y() + 2),
-                    (start.get_x() + 5, start.get_y() + 2),
-                    (start.get_x() + 4, start.get_y() + 2),
-                    (start.get_x() + 4, start.get_y() + 3),
-                    (start.get_x() + 4, start.get_y() + 4),
-                    (start.get_x() + 5, start.get_y() + 4),
-                    (start.get_x() + 6, start.get_y() + 4)]
+        logo_cells = get_42logo_cells(
+            self.__config.width, self.__config.height)
 
-        for p in logo_pos:
+        for p in logo_cells:
             self.get()[p[1]][p[0]].set_unbreakable(True)
 
-        self.__visualizer.add_ft(start.get_x(), start.get_y())
+        self.__visualizer.add_ft(start.x, start.y)
 
     def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
         grid = self.get()
@@ -129,19 +116,19 @@ class Maze:
         self.reset()
         if not keep_seed:
             self.new_rand_seed()
-        rng = Random(self.__config.get(ConfigValues.SEED))
+        rng = Random(self.__config.seed)
 
         self.gen_ft_logo()
 
-        start: Position = self.__config.get(ConfigValues.ENTRY)
+        start: Position = self.__config.entry_pos
 
-        self.crawl(start.get_x(), start.get_y(), rng)
+        self.crawl(start.x, start.y, rng)
 
-        if not self.__config.get(ConfigValues.PERFECT):
-            chance = 45.0
+        if not self.__config.perfect:
+            chance = 70.0
             x, y = 0, 0
-            for y in range(self.__config.get(ConfigValues.HEIGHT)):
-                for x in range(self.__config.get(ConfigValues.WIDTH)):
+            for y in range(self.__config.height):
+                for x in range(self.__config.width):
                     if rng.randint(0, 100) < chance:
                         cell = self.get()[y][x]
 
@@ -173,8 +160,8 @@ class Maze:
                             Facing.WEST: Facing.EAST
                         }[di])
 
-        self.__visualizer.add_entry(self.__config.get(ConfigValues.ENTRY))
-        self.__visualizer.add_exit(self.__config.get(ConfigValues.EXIT))
+        self.__visualizer.add_entry(self.__config.entry_pos)
+        self.__visualizer.add_exit(self.__config.exit_pos)
 
         self.__visualizer.add_walls(self.convert_to_hex_str())
         self.__generate = True
@@ -218,8 +205,8 @@ class Maze:
         return True
 
     def new_rand_seed(self) -> None:
-        rand = Random(self.__config.get(ConfigValues.SEED))
-        self.__config.replace_seed(rand.randint(0, 10000000))
+        rand = Random(self.__config.seed)
+        self.__config.replace_seed(rand.randint(-sys.maxsize - 1, sys.maxsize))
 
     def reset_visited(self) -> None:
         for line in self.get():

@@ -1,7 +1,10 @@
 from .position import Position
-from .utils import bool_from_string, is_pos_valid
+from .utils import bool_from_string, is_pos_valid, get_42logo_cells
 from enum import Enum
-from typing import Any
+from typing import Optional
+from pydantic import BaseModel, Field, model_validator
+from random import randint
+import sys
 
 
 class InvalidConfiguration(Exception):
@@ -19,104 +22,84 @@ class ConfigValues(Enum):
     SEED = "seed"
 
 
-class Configuration:
-    def __init__(self, config_file_path: str):
-        self.__config = {}
+class Configuration(BaseModel):
+    width: int = Field(strict=True, ge=11, le=100)
+    height: int = Field(strict=True, ge=9, le=100)
+    entry_pos: Position = Field(strict=True)
+    exit_pos: Position = Field(strict=True)
+    output_file: str = Field(strict=True)
+    perfect: bool = Field(strict=True)
+    seed: Optional[int] = Field(strict=True)
 
+    @model_validator(mode='after')
+    def validator(self) -> "Configuration":
+        if not is_pos_valid(self.entry_pos.x, self.entry_pos.y,
+                            bounds=(self.width, self.height)):
+            raise InvalidConfiguration("Entry is not in the maze bounds")
+
+        if not is_pos_valid(self.exit_pos.x, self.exit_pos.y,
+                            bounds=(self.width, self.height)):
+            raise InvalidConfiguration("Exit is not in the maze bounds")
+
+        if not self.output_file.endswith((".txt", ".maze", ".mf")):
+            raise InvalidConfiguration("Output file must endby one of the "
+                                       "following extension: .txt, .maze, .mf")
+
+        if (self.entry_pos.x, self.entry_pos.y) in \
+                get_42logo_cells(self.width, self.height):
+            raise InvalidConfiguration("Entry cannot be one of the 42 logo's "
+                                       "cells")
+
+        if (self.exit_pos.x, self.exit_pos.y) in \
+                get_42logo_cells(self.width, self.height):
+            raise InvalidConfiguration("Exit cannot be one of the 42 logo's "
+                                       "cells")
+        return self
+
+    def replace_seed(self, new_seed: int):
+        self.seed = new_seed
+
+    @staticmethod
+    def new() -> "Configuration":
+        temp = dict()
         try:
-            with open(config_file_path, "r") as config_file:
+            with open("config.txt", "r") as file:
+                for line in file:
+                    line = line.strip()
 
-                current_line = 1
-                needed_val = [conf_val.value for conf_val in ConfigValues]
+                    if not line or line.startswith('#'):
+                        continue
 
-                for line in config_file.readlines():
-                    clean_line = line.replace('\n', '')
-                    splited = clean_line.split('=')
-                    if len(splited) != 2:
-                        raise InvalidConfiguration(
-                            "Invalid parameter syntax at line " +
-                            f"{current_line} (KEY=VALUE)")
-                    else:
-                        key = splited[0]
-                        val = splited[1]
+                    key, value = line.split("=", 1)
+                    key = key.strip()
+                    value = value.strip()
 
-                        match key.lower():
-                            case "width" | "height" | "seed":
-                                self.__config[key.lower()] = int(val)
-                                needed_val.remove(key.lower())
+                    key = key.lower()
 
-                            case "entry" | "exit":
-                                pos = Position.from_str(val)
-                                self.__config[key.lower()] = pos
-                                needed_val.remove(key.lower())
-
-                            case "perfect":
-                                self.__config[key.lower()] = bool_from_string(
-                                    val)
-                                needed_val.remove(key.lower())
-
-                            case "output_file":
-                                self.__config[key.lower()] = val
-                                needed_val.remove(key.lower())
-
-                            case _:
-                                raise InvalidConfiguration(
-                                    f"Unknown config parameter: '{key}' " +
-                                    f"(line {current_line})")
-
-                    current_line += 1
-
-                if not len(needed_val) == 0:
-                    raise InvalidConfiguration(
-                        f"Missing parameters in config file: {needed_val}"
-                    )
-
-            if (self.get(ConfigValues.HEIGHT) *
-                    self.get(ConfigValues.WIDTH)) > 47*48:
-                raise InvalidConfiguration("Invalid size: cannot excede 48x47"
-                                           + " or 47x48")
-
-            if (self.get(ConfigValues.WIDTH) <= 0
-                    or self.get(ConfigValues.HEIGHT) <= 0):
-                raise InvalidConfiguration("Invalid dimenstions: width and" +
-                                           " height cannot be 0 or negative")
-
-            self.__validity_check()
-
+                    match key:
+                        case "width" | "height" | "seed":
+                            try:
+                                temp[key] = int(value)
+                            except Exception:
+                                temp[key] = None
+                        case "output_file":
+                            temp[key] = value
+                        case "perfect":
+                            temp[key] = bool_from_string(value)
+                        case "entry" | "exit":
+                            try:
+                                temp[key] = Position.from_str(value)
+                            except Exception:
+                                temp[key] = None
         except Exception as e:
-            print(
-                f"{type(e).__name__} caught while "
-                f"preparing maze configuration: {e}")
-            exit(1)
+            raise Exception(f"Error occured during config file reading: {e}")
 
-    def replace_seed(self, new_seed: int) -> None:
-        self.__config[ConfigValues.SEED.value] = new_seed
-
-    def get(self, parameter: ConfigValues) -> Any:
-        return self.__config[parameter.value]
-
-    def set(self, parameter: ConfigValues, val: Any) -> bool:
-        key: str = parameter.value
-
-        try:
-            self.__config[key] = val
-            self.__validity_check()
-            return True
-        except Exception:
-            return False
-
-    def __validity_check(self):
-        entry: Position = self.get(ConfigValues.ENTRY)
-        ext: Position = self.get(ConfigValues.EXIT)
-
-        bounds = (self.get(ConfigValues.WIDTH), self.get(ConfigValues.HEIGHT))
-
-        if (entry.get_x() == ext.get_x()) and (entry.get_y() == ext.get_y()):
-            raise InvalidConfiguration("Entry and exit cannot be at the same"
-                                       "position!")
-
-        if not is_pos_valid(entry.get_x(), entry.get_y(), bounds):
-            raise InvalidConfiguration("Invalid Entry: Out of bounds!")
-
-        if not is_pos_valid(ext.get_x(), ext.get_y(), bounds):
-            raise InvalidConfiguration("Invalid Exit: Out of bounds!")
+        return Configuration(
+            width=temp.get("width", None),
+            height=temp.get("height", None),
+            seed=temp.get("seed", randint(-sys.maxsize - 1, sys.maxsize)),
+            output_file=temp.get("output_file", None),
+            perfect=temp.get("perfect", None),
+            entry_pos=temp.get("entry", None),
+            exit_pos=temp.get("exit", None)
+        )

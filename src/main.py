@@ -153,7 +153,11 @@ if __name__ == "__main__":
     else:
         system("clear")
         config_path = argv[1]
-        config = Configuration(config_path)
+        try:
+            config = Configuration.new()
+        except Exception as e:
+            print(f"Failed to load configuration file:\n{e}")
+            exit(1)
 
         lab: Maze = Maze(config)
         loop(lab)

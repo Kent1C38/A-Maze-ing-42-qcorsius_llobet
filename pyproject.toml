@@ -1,0 +1,18 @@
+[project]
+name = "MazeGenerator"
+dynamic = ["version"]
+
+[tool.poetry]
+version = "0.1.0"
+package-mode = false
+authors = [
+	"qcorsius <qcorsius@student.42lyon.fr>",
+	"llobet <llobet@student.42lyon.fr>"
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.14"
+pydantic = "^2.12.5"
+flake8 = "^7.3.0"
+mypy = "^1.19.1"
