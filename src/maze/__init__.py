@@ -166,10 +166,10 @@ class Maze:
 
         self.__visualizer.add_entry(self.__config.entry_pos)
         self.__visualizer.add_exit(self.__config.exit_pos)
-
         self.__visualizer.add_walls(self.convert_to_hex_str())
         self.__generate = True
         self.gen_ft_logo()
+        stdout.flush()
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
@@ -223,12 +223,11 @@ class Maze:
                     stdout.write("\033[1D\033[0")
                     stdout.write("\033[96m \033[0")
                     # stdout.write("\033[0C\033[0")
-
+                stdout.flush()
                 stdout.write(f"\033[{self.__config.height * 2}A\033[0")
                 stdout.write(f"\033[{(self.__config.height - y) * 2 - 1}B\033[0")
                 stdout.write(f"\033[{self.__config.width * 3}D\033[0")
                 stdout.write(f"\033[{(self.__config.width - x) * 3 - 2}C\033[0")
-                stdout.flush()
                 sleep(0.01)
 
             self.crawl(nx, ny, rng)
