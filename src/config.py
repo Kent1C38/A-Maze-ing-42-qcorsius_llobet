@@ -1,5 +1,6 @@
 from .position import Position
 from .utils import bool_from_string, is_pos_valid, get_42logo_cells
+from .enums import Limits
 from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 from random import randint
@@ -12,8 +13,10 @@ class InvalidConfiguration(Exception):
 
 
 class Configuration(BaseModel):
-    width: int = Field(strict=True, ge=11, le=100)
-    height: int = Field(strict=True, ge=9, le=100)
+    width: int = Field(strict=True,
+                       ge=Limits.MIN_WIDTH.value, le=Limits.MAX_WIDTH.value)
+    height: int = Field(strict=True,
+                        ge=Limits.MIN_HEIGHT.value, le=Limits.MAX_HEIGHT.value)
     entry_pos: Position = Field(strict=True)
     exit_pos: Position = Field(strict=True)
     output_file: str = Field(strict=True)

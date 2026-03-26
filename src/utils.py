@@ -1,5 +1,6 @@
 from .enums import Color
 from .position import Position
+from sys import stdout
 
 
 def bool_from_string(string: str):
@@ -51,3 +52,19 @@ def colorize(str: str, color: Color) -> str:
 
 def bold(str: str) -> str:
     return f"\033[1m{str}\033[0m"
+
+
+def move_left(amt: int) -> None:
+    stdout.write(f"\033[{amt}D\033[0")
+
+
+def move_right(amt: int) -> None:
+    stdout.write(f"\033[{amt}C\033[0")
+
+
+def move_up(amt: int) -> None:
+    stdout.write(f"\033[{amt}A\033[0")
+
+
+def move_down(amt: int) -> None:
+    stdout.write(f"\033[{amt}B\033[0")

@@ -4,14 +4,54 @@ from sys import argv
 from os import system
 from .config import Configuration
 from .maze import Maze
-from .enums import MazeObject, Color
+from .enums import MazeObject, Color, Limits
 from .input import InputHandler, InvalidOption
-from .utils import colorize
+from .utils import colorize, get_42logo_cells
+
+
+def change_config_display(config: Configuration) -> None:
+    enx: int = config.entry_pos.x
+    eny: int = config.entry_pos.y
+    exx: int = config.exit_pos.x
+    exy: int = config.exit_pos.y
+    g: Color = Color.GREEN
+    r: Color = Color.RED
+
+    width: str = colorize(f"WIDTH: {config.width}", Color.WHITE)
+    height: str = colorize(f"HEIGHT: {config.height}", Color.WHITE)
+    entry: str = colorize(f"ENTRY: [{enx}, {eny}]", Color.WHITE)
+    exit_label: str = colorize(f"EXIT: [{exx}, {exy}]", Color.WHITE)
+    perfect: str = colorize("PERFECT", config.perfect and g or r)
+    seed: str = colorize(f"SEED: {config.seed}", Color.WHITE)
+
+    InputHandler.change_options([
+        f"1 ║ {width}",
+        f"2 ║ {height}",
+        f"3 ║ {entry}",
+        f"4 ║ {exit_label}",
+        f"5 ║ {perfect}",
+        f"6 ║ {seed}",
+        f"0 ║ {colorize('GO BACK', Color.RED)}",
+    ])
+
+
+def change_anim_display(maze: bool, path: bool) -> None:
+    on: Color = Color.GREEN
+    off: Color = Color.RED
+    maze_label: str = colorize("MAZE ANIMATION", maze and on or off)
+    path_label: str = colorize("PATH ANIMATION", path and on or off)
+
+    InputHandler.change_options([
+        f"1 ║ {maze_label}",
+        f"2 ║ {path_label}",
+        f"0 ║ {colorize('GO BACK', Color.RED)}"
+    ])
 
 
 def loop(lab: Maze) -> None:
     prompt: str
     err: bool = False
+    err_msg: str = None
     obj: MazeObject
 
     while True:
@@ -21,7 +61,8 @@ def loop(lab: Maze) -> None:
             print("")
         if err:
             err = False
-            InputHandler.display_error()
+            InputHandler.display_error(err_msg)
+            err_msg = None
         InputHandler.display()
         try:
             prompt = InputHandler.prompt()
@@ -87,61 +128,138 @@ def loop(lab: Maze) -> None:
             case "HideMaze":
                 lab.hide()
             case "SwitchAnimMaze":
-                c_wall: Color
-                state_wall: bool
-                c_path: Color
-                state_path: bool
-                str_wall: str
-                s_path: str
-
                 lab.switch_animation_state(MazeObject.WALL)
                 state_wall = lab.get_animation_state(MazeObject.WALL)
                 state_path = lab.get_animation_state(MazeObject.PATH)
-                c_wall = state_wall and Color.GREEN or Color.RED
-                c_path = state_path and Color.GREEN or Color.RED
-                str_wall = state_wall and "ON " or "OFF"
-                s_path = state_path and "ON " or "OFF"
-                InputHandler.change_options([
-                    f"1 ║ MAZE ANIMATION: {colorize(str_wall, c_wall)}     ║\n"
-                    f"║ 2 ║ PATH ANIMATION: {colorize(s_path, c_path)}     ║\n"
-                    f"║ 0 ║ {colorize('GO BACK', Color.RED)}                 "
-                ])
+                change_anim_display(state_wall, state_path)
             case "SwitchAnimPath":
-                c_wall: Color
-                state_wall: bool
-                c_path: Color
-                state_path: bool
-                str_wall: str
-                s_path: str
-
                 lab.switch_animation_state(MazeObject.PATH)
                 state_wall = lab.get_animation_state(MazeObject.WALL)
                 state_path = lab.get_animation_state(MazeObject.PATH)
-                c_wall = state_wall and Color.GREEN or Color.RED
-                c_path = state_path and Color.GREEN or Color.RED
-                str_wall = state_wall and "ON " or "OFF"
-                s_path = state_path and "ON " or "OFF"
-                InputHandler.change_options([
-                    f"1 ║ MAZE ANIMATION: {colorize(str_wall, c_wall)}     ║\n"
-                    f"║ 2 ║ PATH ANIMATION: {colorize(s_path, c_path)}     ║\n"
-                    f"║ 0 ║ {colorize('GO BACK', Color.RED)}                 "
-                ])
+                change_anim_display(state_wall, state_path)
             case "GoToOptions":
                 InputHandler.goto("Options")
             case "GoToMazeOptions":
                 InputHandler.goto("Maze")
+                change_config_display(lab.get_config())
             case "ChangeWidth":
-                pass
+                val: int | None = InputHandler.change_value("WIDTH:")
+                min_w: int = Limits.MIN_WIDTH.value
+                max_w: int = Limits.MAX_WIDTH.value
+
+                if not isinstance(val, int):
+                    err = True
+                    err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                else:
+                    if val < min_w:
+                        err = True
+                        err_msg = f"WIDTH MUST BE GREATER OR EQUAL TO {min_w}"
+                        continue
+                    if val > max_w:
+                        err = True
+                        err_msg = f"WIDTH MUST BE LESSER OR EQUAL TO {max_w}"
+                        continue
+                    conf: Configuration = lab.get_config()
+
+                    conf.width = val
+                    change_config_display(conf)
             case "ChangeHeight":
-                pass
-            case "ChangeEntry":
-                pass
-            case "ChangeExit":
-                pass
+                val: int | None = InputHandler.change_value("HEIGHT:")
+                min_h: int = Limits.MIN_HEIGHT.value
+                max_h: int = Limits.MAX_HEIGHT.value
+
+                if not isinstance(val, int):
+                    err = True
+                    err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                else:
+                    if val < min_h:
+                        err = True
+                        err_msg = f"HEIGHT MUST BE GREATER OR EQUAL TO {min_h}"
+                        continue
+                    if val > max_h:
+                        err = True
+                        err_msg = f"HEIGHT MUST BE LESSER OR EQUAL TO {max_h}"
+                        continue
+                    conf: Configuration = lab.get_config()
+
+                    conf.height = val
+                    change_config_display(conf)
+            case "ChangeEntryPosition":
+                x: int | None
+                y: int | None
+                conf: Configuration = lab.get_config()
+
+                x = InputHandler.change_value("X:")
+                if not isinstance(x, int):
+                    err = True
+                    err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                else:
+                    if x < 0 or x > conf.width:
+                        err = True
+                        err_msg = "ENTRY CANNOT BE OFF BOUNDS"
+                        continue
+                    print("")
+                    y = InputHandler.change_value("Y:")
+                    if not isinstance(y, int):
+                        err = True
+                        err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                    else:
+                        if y < 0 or y > conf.height:
+                            err = True
+                            err_msg = "ENTRY CANNOT BE OFF BOUNDS"
+                            continue
+                        if (x, y) in get_42logo_cells(conf.width, conf.height):
+                            err = True
+                            err_msg = "ENTRY CANNOT BE ON 42 LOGO"
+                            continue
+                        conf.entry_pos.x = x
+                        conf.entry_pos.y = y
+                        change_config_display(conf)
+            case "ChangeExitPosition":
+                x: int | None
+                y: int | None
+                conf: Configuration = lab.get_config()
+
+                x = InputHandler.change_value("X:")
+                if not isinstance(x, int):
+                    err = True
+                    err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                else:
+                    if x < 0 or x > conf.width:
+                        err = True
+                        err_msg = "EXIT CANNOT BE OFF BOUNDS"
+                        continue
+                    print("")
+                    y = InputHandler.change_value("Y:")
+                    if not isinstance(y, int):
+                        err = True
+                        err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
+                    else:
+                        if y < 0 or y > conf.height:
+                            err = True
+                            err_msg = "EXIT CANNOT BE OFF BOUNDS"
+                            continue
+                        if (x, y) in get_42logo_cells(conf.width, conf.height):
+                            err = True
+                            err_msg = "EXIT CANNOT BE ON 42 LOGO"
+                            continue
+                        conf.exit_pos.x = x
+                        conf.exit_pos.y = y
+                        change_config_display(conf)
             case "ChangePerfect":
-                pass
+                conf: Configuration = lab.get_config()
+                conf.perfect = not conf.perfect
+                change_config_display(conf)
             case "ChangeSeed":
-                pass
+                val: int | None = InputHandler.change_value("SEED:")
+
+                if not isinstance(val, int):
+                    err = True
+                else:
+                    conf: Configuration = lab.get_config()
+
+                    conf.seed = val
+                    change_config_display(conf)
             case "Exit":
                 system("clear")
                 exit(0)

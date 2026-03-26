@@ -1,17 +1,16 @@
 from ..config import Configuration
 from ..position import Position
 from ..enums import Color, MazeObject
-from ..utils import colorize
+from ..utils import colorize, move_down, move_up, move_left, move_right
 from sys import stdout
 from time import sleep
 
 
 class Map:
     def __init__(self: "Map", config: Configuration) -> None:
-        self.__width = config.width
-        self.__height = config.height
-        self.__map = [[" " for _ in range(self.__width * 3 + 2)]
-                      for _ in range(self.__height * 2 + 1)]
+        self.__config: Configuration = config
+        self.__map = [[" " for _ in range(self.__config.width * 3 + 2)]
+                      for _ in range(self.__config.height * 2 + 1)]
         self.__wall_color: Color = Color.WHITE
         self.__path_color: Color = Color.WHITE
         self.__entry_color: Color = Color.GREEN
@@ -19,10 +18,10 @@ class Map:
         self.__42_color: Color = Color.CYAN
 
     def get_width(self: "Map") -> int:
-        return self.__width
+        return self.__config.width
 
     def get_height(self: "Map") -> int:
-        return self.__height
+        return self.__config.height
 
     def add_cell(self: "Map", x: int, y: int, cell: str) -> None:
         self.__map[y * 2 + 1][x * 3 + 1] = cell
@@ -122,8 +121,8 @@ class Map:
         print(string)
 
     def reset(self) -> None:
-        self.__map = [[" " for _ in range(self.__width * 3 + 2)]
-                      for _ in range(self.__height * 2 + 1)]
+        self.__map = [[" " for _ in range(self.__config.width * 3 + 2)]
+                      for _ in range(self.__config.height * 2 + 1)]
 
     def change_color(self, obj: MazeObject, color: Color) -> None:
         match obj.value:
@@ -139,30 +138,30 @@ class Map:
                 self.__42_color = color
 
     def crawl(self, wall: int, x: int, y: int, w: int, h: int) -> None:
-        stdout.write(f"\033[{h * 2}A\033[0")
-        stdout.write(f"\033[{w * 3}D\033[0")
-        stdout.write(f"\033[{y * 2 + 1}B\033[0")
-        stdout.write(f"\033[{x * 3 + 1}C\033[0")
+        move_up(h * 2)
+        move_left(w * 3)
+        move_down(y * 2 + 1)
+        move_right(x * 3 + 1)
         stdout.flush()
         if not wall & 0x1:
-            stdout.write("\033[1A\033[0")
+            move_up(1)
             stdout.write("\033[96m  \033[0")
-            stdout.write("\033[2D\033[0")
-            stdout.write("\033[1B\033[0")
+            move_left(2)
+            move_down(1)
         if not wall & 0x2:
-            stdout.write("\033[2C\033[0")
+            move_right(2)
             stdout.write("\033[96m \033[0")
-            stdout.write("\033[3D\033[0")
+            move_left(3)
         if not wall & 0x4:
-            stdout.write("\033[1B\033[0")
+            move_down(1)
             stdout.write("\033[96m  \033[0")
-            stdout.write("\033[2D\033[0")
-            stdout.write("\033[1A\033[0")
+            move_left(2)
+            move_up(1)
         if not wall & 0x8:
-            stdout.write("\033[1D\033[0")
+            move_left(1)
             stdout.write("\033[96m \033[0")
-        stdout.write(f"\033[{h * 2}A\033[0")
-        stdout.write(f"\033[{(h - y) * 2 - 1}B\033[0")
-        stdout.write(f"\033[{w * 3}D\033[0")
-        stdout.write(f"\033[{(w - x) * 3 - 2}C\033[0")
+        move_up(h * 2)
+        move_down((h - y) * 2 - 1)
+        move_left(w * 3)
+        move_right((w - x) * 3 - 2)
         sleep(0.01)

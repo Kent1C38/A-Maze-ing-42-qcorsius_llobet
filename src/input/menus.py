@@ -16,20 +16,17 @@ class BaseMenu(ABC):
         menu: str = ""
         top_bar: str = "╔═══╦═"
         bottom_bar: str = "╚═══╩═"
+        bar_length: int = 32
         i: int = 1
 
         top_bar += f" {self.__name.upper()} "
-        for _ in range(22 - len(self.__name)):
-            top_bar += "═"
+        top_bar += ("═" * (bar_length - 2 - len(self.__name)))
         top_bar += "╗"
-        for _ in range(24):
-            bottom_bar += "═"
+        bottom_bar += ("═" * bar_length)
         bottom_bar += "╝"
         for opt in self.__options:
             line: str = f"║ {opt}"
-
-            for _ in range(39 - len(line)):
-                line += " "
+            line += (" " * (bar_length + 15 - len(line)))
             line += "║\n"
             menu += line
             i += 1
@@ -168,9 +165,9 @@ class MazeMenu(BaseMenu):
             case 2:
                 return "ChangeHeight"
             case 3:
-                return "ChangeEntry"
+                return "ChangeEntryPosition"
             case 4:
-                return "ChangeExit"
+                return "ChangeExitPosition"
             case 5:
                 return "ChangePerfect"
             case 6:

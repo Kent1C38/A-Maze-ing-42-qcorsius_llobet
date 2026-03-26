@@ -7,7 +7,7 @@ from time import sleep
 
 from .menus import (BaseMenu, MainMenu, ColorMenu, DisplayMenu, AnimMenu,
                     OptionsMenu, MazeMenu)
-from ..utils import colorize, bold
+from ..utils import colorize, bold, move_up, move_right
 from ..enums import Color
 
 # --- EXCEPTIONS --------------------------------------------------------------
@@ -41,8 +41,8 @@ class InputHandler:
             f"0 ║ {colorize('GO BACK', Color.RED)}",
         ]),
         "Animation": AnimMenu("Animation Menu", [
-            f"1 ║ MAZE ANIMATION: {colorize('OFF', Color.RED)}",
-            f"2 ║ PATH ANIMATION: {colorize('OFF', Color.RED)}",
+            f"1 ║ {colorize('MAZE ANIMATION', Color.RED)}",
+            f"2 ║ {colorize('PATH ANIMATION', Color.RED)}",
             f"0 ║ {colorize('GO BACK', Color.RED)}",
         ]),
         "Display": DisplayMenu("Color Menu", [
@@ -88,9 +88,11 @@ class InputHandler:
         return cls.__opened.prompt()
 
     @classmethod
-    def display_error(cls) -> None:
+    def display_error(cls, msg: str | None = None) -> None:
+        if not msg:
+            msg = "INVALID OPTION. PLEASE CHOOSE A VALID OPTION"
         err: str = """╔═════════════════════════════════════════════════════╗
-║ ERROR: INVALID OPTION. PLEASE CHOOSE A VALID OPTION ║
+║ ERROR:                                              ║
 ╚═════════════════════════════════════════════════════╝"""
 
         err = bold(colorize(err, Color.DARK_RED))
@@ -98,6 +100,10 @@ class InputHandler:
             print(c, end="", flush=True)
             sleep(0.0005)
         print("")
+        move_up(2)
+        move_right(9)
+        print(f"m{bold(colorize(msg, Color.RED))}", end="")
+        print("\n")
 
     @classmethod
     def set_opened_name(cls, name: str) -> None:
@@ -106,3 +112,25 @@ class InputHandler:
     @classmethod
     def change_options(cls, options: List[str]) -> None:
         cls.__opened.change_options(options)
+
+    @classmethod
+    def change_value(cls, msg: str | None = None) -> int | None:
+        if not msg:
+            msg = "NEW VALUE:"
+        prmt: str = """╔═════════════════════════════════════════════════════╗
+║                                                     ║
+╚═════════════════════════════════════════════════════╝"""
+
+        prmt = bold(colorize(prmt, Color.WHITE))
+        for c in prmt:
+            print(c, end="", flush=True)
+            sleep(0.0005)
+        print("")
+        move_up(2)
+        move_right(2)
+        print(bold(colorize(msg, Color.WHITE)), end="")
+        move_right(1)
+        try:
+            return int(input("m"))
+        except (ValueError, TypeError):
+            return None

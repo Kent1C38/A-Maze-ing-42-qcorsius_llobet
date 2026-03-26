@@ -7,6 +7,7 @@ from ..enums import Color, MazeObject
 from ..position import Position
 from sys import stdout, setrecursionlimit, maxsize
 from os import system
+from typing import Tuple
 
 setrecursionlimit(10000)
 
@@ -17,8 +18,6 @@ class Maze:
                         for _ in range(config.width)]
                        for _ in range(config.height)]
         self.__config = config
-        self.__bounds = (self.__config.width,
-                         self.__config.height)
         self.__visualizer = Map(config)
 
         self.__visualizer.add_entry(config.entry_pos)
@@ -44,13 +43,11 @@ class Maze:
         x_center = self.__config.width // 2
         y_center = self.__config.height // 2
         start = Position(x=x_center - 3, y=y_center - 2)
-
         logo_cells = get_42logo_cells(
             self.__config.width, self.__config.height)
 
         for p in logo_cells:
             self.get()[p[1]][p[0]].set_unbreakable(True)
-
         self.__visualizer.add_ft(start.x, start.y)
 
     def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
@@ -93,7 +90,7 @@ class Maze:
 
             for f in Facing:
                 nx, ny = cx + f.dx, cy + f.dy
-                if not is_pos_valid(nx, ny, self.__bounds):
+                if not is_pos_valid(nx, ny, self.get_bounds()):
                     continue
 
                 wall_between = (cx == x and cy == y and f == facing) or \
@@ -146,7 +143,7 @@ class Maze:
                         di: Facing = rng.choice(walls)
 
                         if not is_pos_valid(x + di.dx, y + di.dy,
-                                            self.__bounds):
+                                            self.get_bounds()):
                             continue
 
                         if self.get()[y + di.dy][x + di.dx].is_unbreakable:
@@ -178,7 +175,7 @@ class Maze:
             f = directions.pop(rng.randint(0, len(directions) - 1))
             nx, ny = x + f.dx, y + f.dy
 
-            if not is_pos_valid(nx, ny, self.__bounds):
+            if not is_pos_valid(nx, ny, self.get_bounds()):
                 continue
 
             if self.get()[ny][nx].is_visited:
@@ -218,15 +215,22 @@ class Maze:
         for line in self.get():
             for cell in line:
                 cell.reset()
+        self.__maze = [[Cell()
+                       for _ in range(self.__config.width)]
+                       for _ in range(self.__config.height)]
         self.__visualizer.reset()
 
     def visualize(self) -> None:
         self.__visualizer.visualize()
 
     def set_color(self, obj: MazeObject, color: Color) -> None:
+        maze_anim: bool = self.__anim_maze
+
         self.__visualizer.change_color(obj, color)
+        self.__anim_maze = False
         if self.__generate:
             self.generate(True)
+            self.__anim_maze = maze_anim
 
     def switch_animation_state(self, obj: MazeObject) -> None:
         match obj.value:
@@ -249,3 +253,9 @@ class Maze:
 
     def hide(self) -> None:
         self.__generate = False
+
+    def get_config(self) -> Configuration:
+        return self.__config
+
+    def get_bounds(self) -> Tuple[int, int]:
+        return (self.__config.width, self.__config.height)
