@@ -1,6 +1,5 @@
 from .enums import Color
 from .position import Position
-from sys import stdout
 
 
 def bool_from_string(string: str):
@@ -52,10 +51,3 @@ def colorize(str: str, color: Color) -> str:
 
 def bold(str: str) -> str:
     return f"\033[1m{str}\033[0m"
-
-def move_cursor(pos: Position) -> None:
-    x: int = pos.x
-    y: int = pos.y
-
-    stdout.write(f"\033[{y};{x}H\033[0")
-    stdout.write("█")

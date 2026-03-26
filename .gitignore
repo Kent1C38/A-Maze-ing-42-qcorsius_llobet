@@ -4,6 +4,3 @@
 .gitignore
 env
 *.lock
-*.txt
-!config.txt
-!title.txt
