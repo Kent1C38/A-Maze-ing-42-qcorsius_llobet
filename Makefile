@@ -1,6 +1,9 @@
 PY					:= python
 MAIN				:= src.main
 CONFIG_FILE	:= config.txt
+VENV_MOD	:= venv
+VENV		:= .venv
+ACTIVATE	:= $(addprefix $(VENV), /bin/activate)
 
 POETRY			:= poetry
 FLAKE8				:= flake8
@@ -16,7 +19,7 @@ install:
 	pip install $(POETRY)
 	$(POETRY) install
 
-run: install
+run: venv install
 	$(POETRY) run $(PY) -m $(MAIN) $(CONFIG_FILE)
 
 debug:
@@ -33,3 +36,7 @@ lint: install
 lint-strict: install
 	-$(PY) -m $(FLAKE8) .
 	$(PY) -m $(MYPY) . $(MYPY_FLAGS_STRICT)
+
+venv:
+	$(PY) -m $(VENV_MOD) $(VENV)
+	. $(ACTIVATE)
