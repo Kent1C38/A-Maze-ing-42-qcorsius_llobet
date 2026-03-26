@@ -1,6 +1,5 @@
 from .position import Position
 from .utils import bool_from_string, is_pos_valid, get_42logo_cells
-from enum import Enum
 from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 from random import randint
@@ -10,16 +9,6 @@ import sys
 class InvalidConfiguration(Exception):
     def __init__(self, args):
         super().__init__(args)
-
-
-class ConfigValues(Enum):
-    WIDTH = "width"
-    HEIGHT = "height"
-    ENTRY = "entry"
-    EXIT = "exit"
-    OUTPUT_FILE = "output_file"
-    PERFECT = "perfect"
-    SEED = "seed"
 
 
 class Configuration(BaseModel):

@@ -17,7 +17,7 @@ def loop(lab: Maze) -> None:
     while True:
         system("clear")
         if lab.get_status():
-            # lab.visualize()
+            lab.visualize()
             print("")
         if err:
             err = False

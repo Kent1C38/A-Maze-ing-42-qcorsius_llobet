@@ -1,7 +1,9 @@
-from ..config import Configuration, ConfigValues
+from ..config import Configuration
 from ..position import Position
 from ..enums import Color, MazeObject
 from ..utils import colorize
+from sys import stdout
+from time import sleep
 
 
 class Map:
@@ -135,3 +137,32 @@ class Map:
                 self.__exit_color = color
             case "42":
                 self.__42_color = color
+
+    def crawl(self, wall: int, x: int, y: int, w: int, h: int) -> None:
+        stdout.write(f"\033[{h * 2}A\033[0")
+        stdout.write(f"\033[{w * 3}D\033[0")
+        stdout.write(f"\033[{y * 2 + 1}B\033[0")
+        stdout.write(f"\033[{x * 3 + 1}C\033[0")
+        stdout.flush()
+        if not wall & 0x1:
+            stdout.write("\033[1A\033[0")
+            stdout.write("\033[96m  \033[0")
+            stdout.write("\033[2D\033[0")
+            stdout.write("\033[1B\033[0")
+        if not wall & 0x2:
+            stdout.write("\033[2C\033[0")
+            stdout.write("\033[96m \033[0")
+            stdout.write("\033[3D\033[0")
+        if not wall & 0x4:
+            stdout.write("\033[1B\033[0")
+            stdout.write("\033[96m  \033[0")
+            stdout.write("\033[2D\033[0")
+            stdout.write("\033[1A\033[0")
+        if not wall & 0x8:
+            stdout.write("\033[1D\033[0")
+            stdout.write("\033[96m \033[0")
+        stdout.write(f"\033[{h * 2}A\033[0")
+        stdout.write(f"\033[{(h - y) * 2 - 1}B\033[0")
+        stdout.write(f"\033[{w * 3}D\033[0")
+        stdout.write(f"\033[{(w - x) * 3 - 2}C\033[0")
+        sleep(0.01)

@@ -1,11 +1,10 @@
 from ..utils import is_pos_valid, get_42logo_cells
-from ..config import Configuration, ConfigValues
+from ..config import Configuration
 from .cell import Cell, Facing
 from .visualizer import Map
 from random import Random
 from ..enums import Color, MazeObject
 from ..position import Position
-from time import sleep
 from sys import stdout, setrecursionlimit, maxsize
 from os import system
 
@@ -164,16 +163,16 @@ class Maze:
                             Facing.WEST: Facing.EAST
                         }[di])
 
+        self.__visualizer.reset()
         self.__visualizer.add_entry(self.__config.entry_pos)
         self.__visualizer.add_exit(self.__config.exit_pos)
-
         self.__visualizer.add_walls(self.convert_to_hex_str())
         self.__generate = True
         self.gen_ft_logo()
+        stdout.flush()
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
-
         directions = [f for f in Facing if self.get()[y][x].wall_request(f)]
         while directions:
             f = directions.pop(rng.randint(0, len(directions) - 1))
@@ -200,37 +199,9 @@ class Maze:
             }[f])
 
             if self.__anim_maze:
-                stdout.write(f"\033[{self.__config.height * 2}A\033[0")
-                stdout.write(f"\033[{self.__config.width * 3}D\033[0")
-                stdout.write(f"\033[{y * 2 + 1}B\033[0")
-                stdout.write(f"\033[{x * 3 + 1}C\033[0")
-
-                if not self.get()[y][x].get_active_walls() & 0x1:
-                    stdout.write("\033[1A\033[0")
-                    stdout.write("\033[96m  \033[0")
-                    stdout.write("\033[2D\033[0")
-                    stdout.write("\033[1B\033[0")
-                if not self.get()[y][x].get_active_walls() & 0x2:
-                    stdout.write("\033[2C\033[0")
-                    stdout.write("\033[96m \033[0")
-                    stdout.write("\033[3D\033[0")
-                if not self.get()[y][x].get_active_walls() & 0x4:
-                    stdout.write("\033[1B\033[0")
-                    stdout.write("\033[96m  \033[0")
-                    stdout.write("\033[2D\033[0")
-                    stdout.write("\033[1A\033[0")
-                if not self.get()[y][x].get_active_walls() & 0x8:
-                    stdout.write("\033[1D\033[0")
-                    stdout.write("\033[96m \033[0")
-                    # stdout.write("\033[0C\033[0")
-
-                stdout.write(f"\033[{self.__config.height * 2}A\033[0")
-                stdout.write(f"\033[{(self.__config.height - y) * 2 - 1}B\033[0")
-                stdout.write(f"\033[{self.__config.width * 3}D\033[0")
-                stdout.write(f"\033[{(self.__config.width - x) * 3 - 2}C\033[0")
-                stdout.flush()
-                sleep(0.01)
-
+                self.__visualizer.crawl(self.get()[y][x].get_active_walls(),
+                                        x, y, self.__config.width,
+                                        self.__config.height)
             self.crawl(nx, ny, rng)
         return True
 
