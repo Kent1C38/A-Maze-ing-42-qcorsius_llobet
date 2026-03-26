@@ -9,7 +9,7 @@ from time import sleep
 class Map:
     def __init__(self: "Map", config: Configuration) -> None:
         self.__config: Configuration = config
-        self.__map = [[" " for _ in range(self.__config.width * 3 + 2)]
+        self.__map = [[" " for _ in range(self.__config.width * 4 + 2)]
                       for _ in range(self.__config.height * 2 + 1)]
         self.__wall_color: Color = Color.WHITE
         self.__path_color: Color = Color.WHITE
@@ -24,8 +24,8 @@ class Map:
         return self.__config.height
 
     def add_cell(self: "Map", x: int, y: int, cell: str) -> None:
-        self.__map[y * 2 + 1][x * 3 + 1] = cell
-        self.__map[y * 2 + 1][x * 3 + 2] = cell
+        self.__map[y * 2 + 1][x * 4 + 1] = cell
+        self.__map[y * 2 + 1][x * 4 + 2] = cell
 
     def add_walls(self: "Map", walls: str) -> None:
         i: int = 0
@@ -53,10 +53,10 @@ class Map:
                 self.__map[i + 2][j + 2] = block
             if n & 0x8:
                 self.__map[i + 1][j] = block
-            j += 3
+            j += 4
 
     def add_path(self: "Map", x: int, y: int, path: str) -> None:
-        x: int = x * 3
+        x: int = x * 4
         y: int = y * 2
         path_char: str = colorize("█", self.__path_color)
 
@@ -70,14 +70,14 @@ class Map:
                     y -= 2
                 case "E":
                     self.__map[y + 1][x + 3] = path_char
-                    x += 3
+                    x += 4
                 case "S":
                     self.__map[y + 2][x + 1] = path_char
                     self.__map[y + 2][x + 2] = path_char
                     y += 2
                 case "W":
                     self.__map[y + 1][x] = path_char
-                    x -= 3
+                    x -= 4
 
     def add_entry(self: "Map", pos: Position) -> None:
         entry_char: str = colorize("█", self.__entry_color)
@@ -121,7 +121,7 @@ class Map:
         print(string)
 
     def reset(self) -> None:
-        self.__map = [[" " for _ in range(self.__config.width * 3 + 2)]
+        self.__map = [[" " for _ in range(self.__config.width * 4 + 2)]
                       for _ in range(self.__config.height * 2 + 1)]
 
     def change_color(self, obj: MazeObject, color: Color) -> None:
@@ -139,9 +139,9 @@ class Map:
 
     def crawl(self, wall: int, x: int, y: int, w: int, h: int) -> None:
         move_up(h * 2)
-        move_left(w * 3)
+        move_left(w * 4)
         move_down(y * 2 + 1)
-        move_right(x * 3 + 1)
+        move_right(x * 4 + 1)
         stdout.flush()
         if not wall & 0x1:
             move_up(1)
@@ -150,18 +150,18 @@ class Map:
             move_down(1)
         if not wall & 0x2:
             move_right(2)
-            stdout.write("\033[96m \033[0")
-            move_left(3)
+            stdout.write("\033[96m  \033[0")
+            move_left(4)
         if not wall & 0x4:
             move_down(1)
             stdout.write("\033[96m  \033[0")
             move_left(2)
             move_up(1)
         if not wall & 0x8:
-            move_left(1)
-            stdout.write("\033[96m \033[0")
+            move_left(2)
+            stdout.write("\033[96m  \033[0")
         move_up(h * 2)
         move_down((h - y) * 2 - 1)
-        move_left(w * 3)
-        move_right((w - x) * 3 - 2)
+        move_left(w * 4)
+        move_right((w - x) * 4 - 2)
         sleep(0.01)
