@@ -52,10 +52,10 @@ class Configuration(BaseModel):
         self.seed = new_seed
 
     @staticmethod
-    def new() -> "Configuration":
+    def new(config_path: str) -> "Configuration":
         temp = dict()
         try:
-            with open("config.txt", "r") as file:
+            with open(config_path, "r") as file:
                 for line in file:
                     line = line.strip()
 

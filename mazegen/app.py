@@ -1,12 +1,10 @@
-#!/usr/bin/python3.10
-
+from .utils import colorize, get_42logo_cells
+from .input import InputHandler, InvalidOption
+from .enums import MazeObject, Color, Limits
+from .maze import Maze
+from .config import Configuration
 from sys import argv
 from os import system
-from .config import Configuration
-from .maze import Maze
-from .enums import MazeObject, Color, Limits
-from .input import InputHandler, InvalidOption
-from .utils import colorize, get_42logo_cells
 
 
 def change_config_display(config: Configuration) -> None:
@@ -265,14 +263,14 @@ def loop(lab: Maze) -> None:
                 exit(0)
 
 
-if __name__ == "__main__":
+def run():
     if len(argv) <= 1:
         print(f"Usage: python3 {argv[0]} <config file path>")
     else:
         system("clear")
         config_path = argv[1]
         try:
-            config = Configuration.new()
+            config = Configuration.new(config_path)
         except Exception as e:
             print(f"Failed to load configuration file:\n{e}")
             exit(1)

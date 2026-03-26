@@ -1,10 +1,12 @@
 PY					:= python
-MAIN				:= src.main
 CONFIG_FILE	:= config.txt
 VENV_MOD	:= venv
-VENV		:= .venv
-ACTIVATE	:= $(addprefix $(VENV), /bin/activate)
+VENV		:= .environment
+PACKAGE			:= mazegen
+ACTIVATE	:= $(VENV)/bin/activate
+RUN_CMD			:= a-maze-ing
 
+PIP					:= pip
 POETRY			:= poetry
 FLAKE8				:= flake8
 MYPY				:= mypy
@@ -15,28 +17,34 @@ MYPY_FLAGS			:=	--warn-return-any \
 						--check-untyped-defs
 MYPY_FLAGS_STRICT	:=	--strict
 
-install:
-	pip install $(POETRY)
-	$(POETRY) install
+build:
+	$(POETRY) build -o .
 
-run: venv install
-	$(POETRY) run $(PY) -m $(MAIN) $(CONFIG_FILE)
+venv: $(ACTIVATE)
 
-debug:
-	$(POETRY) run $(PY) -m pdb $(MAIN) $(CONFIG_FILE)
+$(ACTIVATE):
+	@echo "Creating virtual environment..."
+	@$(PY) -m $(VENV_MOD) $(VENV)
+	@echo "Done !"
+
+install: venv pyproject.toml
+	@. $(ACTIVATE) && $(PIP) install .
+
+run: install
+	@. $(ACTIVATE) && $(RUN_CMD) $(CONFIG_FILE)
+
+debug: install
+	@. $(ACTIVATE) && $(PY) -m pdb $(RUN_CMD) $(CONFIG_FILE)
 
 clean:
-	rm ./__pycache__
-	rm ./.mypy_cache
+	@rm -rf */__pycache__
+	@rm -rf .mypy_cache
+	@echo "Cleared project !"
 
-lint: install 
-	-$(PY) -m $(FLAKE8) .
-	$(PY) -m $(MYPY) . $(MYPY_FLAGS)
+lint: install
+	-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
+	. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS)
 
 lint-strict: install
-	-$(PY) -m $(FLAKE8) .
-	$(PY) -m $(MYPY) . $(MYPY_FLAGS_STRICT)
-
-venv:
-	$(PY) -m $(VENV_MOD) $(VENV)
-	. $(ACTIVATE)
+	-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
+	. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS_STRICT)

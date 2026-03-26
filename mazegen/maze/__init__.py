@@ -121,7 +121,8 @@ class Maze:
         system("clear")
         self.__visualizer.reset()
         self.__visualizer.add_walls(self.convert_to_hex_str())
-        self.visualize()
+        if self.__anim_maze:
+            self.visualize()
         self.crawl(start.x, start.y, rng)
 
         if not self.__config.perfect:

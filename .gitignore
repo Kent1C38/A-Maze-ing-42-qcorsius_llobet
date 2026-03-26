@@ -2,5 +2,5 @@
 .vscode
 .mypy_cache
 .gitignore
-env
+.environment
 *.lock
