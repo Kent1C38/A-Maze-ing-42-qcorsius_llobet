@@ -71,6 +71,8 @@ def loop(lab: Maze) -> None:
         match prompt:
             case "GenerateMaze":
                 lab.generate()
+            case "SolveMaze":
+                lab.generate(keep_seed=True, invert_solve=True)
             case "GoToColorOptions":
                 InputHandler.goto("Display")
             case "ChangeWalls":

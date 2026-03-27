@@ -14,7 +14,7 @@ readme = "README.md"
 packages = [{include = "mazegen"}]
 
 [tool.poetry.scripts]
-a-maze-ing = "mazegen.app:run"
+a-maze-ing = "mazegen.a_maze_ing:run"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.14"

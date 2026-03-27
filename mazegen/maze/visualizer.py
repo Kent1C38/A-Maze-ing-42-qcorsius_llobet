@@ -12,7 +12,7 @@ class Map:
         self.__map = [[" " for _ in range(self.__config.width * 4 + 2)]
                       for _ in range(self.__config.height * 2 + 1)]
         self.__wall_color: Color = Color.WHITE
-        self.__path_color: Color = Color.WHITE
+        self.__path_color: Color = Color.BLUE
         self.__entry_color: Color = Color.GREEN
         self.__exit_color: Color = Color.RED
         self.__42_color: Color = Color.CYAN
@@ -60,9 +60,10 @@ class Map:
         y: int = y * 2
         path_char: str = colorize("█", self.__path_color)
 
-        for char in path:
-            self.__map[y + 1][x + 1] = path_char
-            self.__map[y + 1][x + 2] = path_char
+        for index, char in enumerate(path):
+            if not index == 0:
+                self.__map[y + 1][x + 1] = path_char
+                self.__map[y + 1][x + 2] = path_char
             match char:
                 case "N":
                     self.__map[y][x + 1] = path_char

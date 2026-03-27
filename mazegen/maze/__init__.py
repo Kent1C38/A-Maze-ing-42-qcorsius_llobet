@@ -20,6 +20,7 @@ class Maze:
         self.__config = config
         self.__visualizer = Map(config)
 
+        self.__solved = False
         self.__visualizer.add_entry(config.entry_pos)
         self.__visualizer.add_exit(config.exit_pos)
         self.__generate: bool = False
@@ -108,7 +109,8 @@ class Maze:
 
         return False
 
-    def generate(self, keep_seed: bool = False) -> bool:
+    def generate(self, keep_seed: bool = False,
+                 invert_solve: bool = False) -> bool:
         self.reset()
         if not keep_seed:
             self.new_rand_seed()
@@ -165,12 +167,16 @@ class Maze:
         self.__visualizer.add_entry(self.__config.entry_pos)
         self.__visualizer.add_exit(self.__config.exit_pos)
         self.__visualizer.add_walls(self.convert_to_hex_str())
-        self.__visualizer.add_path(
-            self.__config.entry_pos.x,
-            self.__config.entry_pos.y,
-            a_star(self.get(), self.__config.entry_pos,
-                   self.__config.exit_pos)
-        )
+        path = a_star(self.get(), self.__config.entry_pos,
+                      self.__config.exit_pos)
+        if invert_solve:
+            self.__solved = not self.__solved
+        if self.__solved:
+            self.__visualizer.add_path(
+                self.__config.entry_pos.x,
+                self.__config.entry_pos.y,
+                path
+            )
 
         self.__generate = True
         self.gen_ft_logo()

@@ -45,9 +45,23 @@ clean:
 	@echo "Cleared project !"
 
 lint: install
-	-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
-	. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS)
+	@clear
+	@echo "Running flake8..."
+	@sleep 1
+	@-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
+	@echo "Done !"
+	@echo "Running mypy..."
+	@sleep 1
+	@-. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS)
+	@echo "Done !"
 
 lint-strict: install
-	-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
-	. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS_STRICT)
+	@clear
+	@echo "Running flake8..."
+	@sleep 1
+	@-. $(ACTIVATE) && $(PY) -m $(FLAKE8) $(PACKAGE)
+	@echo "Done !"
+	@echo "Running mypy..."
+	@sleep 1
+	@-. $(ACTIVATE) && $(PY) -m $(MYPY) $(PACKAGE) $(MYPY_FLAGS_STRICT)
+	@echo "Done !"
