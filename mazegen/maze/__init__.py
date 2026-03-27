@@ -160,13 +160,21 @@ class Maze:
                             Facing.EAST: Facing.WEST,
                             Facing.WEST: Facing.EAST
                         }[di])
-
+        from .solver import a_star
         self.__visualizer.reset()
         self.__visualizer.add_entry(self.__config.entry_pos)
         self.__visualizer.add_exit(self.__config.exit_pos)
         self.__visualizer.add_walls(self.convert_to_hex_str())
+        self.__visualizer.add_path(
+            self.__config.entry_pos.x,
+            self.__config.entry_pos.y,
+            a_star(self.get(), self.__config.entry_pos,
+                   self.__config.exit_pos)
+        )
+
         self.__generate = True
         self.gen_ft_logo()
+
         stdout.flush()
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
@@ -217,7 +225,7 @@ class Maze:
             for cell in line:
                 cell.reset()
         self.__maze = [[Cell()
-                       for _ in range(self.__config.width)]
+                        for _ in range(self.__config.width)]
                        for _ in range(self.__config.height)]
         self.__visualizer.reset()
 
@@ -260,3 +268,33 @@ class Maze:
 
     def get_bounds(self) -> Tuple[int, int]:
         return (self.__config.width, self.__config.height)
+
+    def resolve_path(self) -> str:
+        entry = self.__config.entry_pos
+        exitt = self.__config.exit_pos
+
+        def calc_rel_dist(current: Position, objective: Position):
+            return (objective.x - current.x, objective.y - current.y)
+
+        def a_star(maze: list[list[Cell]], pos: Position,
+                   path: str = "") -> str:
+            open_walls = [f for f in Facing
+                          if not self.get()[pos.y][pos.x].wall_request(f)]
+            directions = dict()
+            for face in open_walls:
+                dx, dy = calc_rel_dist(Position(
+                    x=pos.x + face.dx,
+                    y=pos.y + face.dy
+                ), exitt)
+                directions[face] = dx + dy
+            directions = sorted(directions.keys(), key=lambda x: directions[x])
+            print(directions)
+
+        a_star(self.get(), entry)
+
+
+if __name__ == "__main__":
+    lab = Maze(Configuration.new("config.txt"))
+    lab.generate()
+
+    lab.resolve_path()

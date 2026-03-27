@@ -27,6 +27,9 @@ $(ACTIVATE):
 	@$(PY) -m $(VENV_MOD) $(VENV)
 	@echo "Done !"
 
+edit/nvim: install
+	@. $(ACTIVATE) && nvim .
+
 install: venv pyproject.toml
 	@. $(ACTIVATE) && $(PIP) install .
 
