@@ -134,6 +134,31 @@ works with Poetry.
 
 * #### MANAGEMENT
 
+    Before starting the project, we settled on using TUI for the rendering of
+    the maze. We did this choice because we heard that using the provided
+    library was not simple and had some issues. We also thought working on a 
+    TUI application was somewhat easier and would also allow us to learn more
+    about how the terminal render text. (Additionally, while this is my personal
+    opinion, but I believe TUI applications look very nice)
+
     Our vision of the project did not really change as time went by. The only
     significant changes were regarding the structure of the project and the
-    User Interface.
+    UI.
+
+    During the development of the project, some things could be improved, like
+    working more regularly on it instead of rushing in a few days. While we
+    did try to do this, due to the Python Modules, we had to focus on many
+    tasks at once, which was not optimal.
+
+    Despite that, we believe we did a good job regarding the development. We
+    both knew what we needed to work on, we were not confused on what direction
+    to take next at any point in the project. Communication between us was good
+    as well, we would regularly update each other on what tasks were done and
+    what to focus on next.
+
+    We used tools to help us with some parts of the project. The most notable
+    tool is Pydantic. Before we did Python Module 09, we did not know about
+    Pydantic, and we would add many manual checks to ensure the configuration
+    file was good. But because of that, the code was not very clean nor readable.
+    So we then scrapped this part of the code and rewrote it with Pydantic in
+    mind. This helped us a lot with parsing.
