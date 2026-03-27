@@ -19,6 +19,10 @@ class Facing(Enum):
     def dy(self) -> int:
         return self.value[1][1]
 
+    @property
+    def vector(self) -> tuple[int, int]:
+        return self.value[1]
+
 
 class Cell:
     def __init__(self):

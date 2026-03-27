@@ -17,5 +17,11 @@ class Position(BaseModel):
             raise Exception(f"Failed to create position from string {string}: "
                             f"{e}")
 
+    def heuristic(self, destination: "Position"):
+        return abs(destination.x - self.x) + abs(destination.y - self.y)
+
+    def get(self) -> tuple[int, int]:
+        return (self.x, self.y)
+
     def __str__(self):
         return f"(x={self.get_x()}, y={self.get_y()})"

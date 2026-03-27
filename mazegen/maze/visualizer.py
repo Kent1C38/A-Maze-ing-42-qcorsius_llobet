@@ -70,12 +70,14 @@ class Map:
                     y -= 2
                 case "E":
                     self.__map[y + 1][x + 3] = path_char
+                    self.__map[y + 1][x + 4] = path_char
                     x += 4
                 case "S":
                     self.__map[y + 2][x + 1] = path_char
                     self.__map[y + 2][x + 2] = path_char
                     y += 2
                 case "W":
+                    self.__map[y + 1][x - 1] = path_char
                     self.__map[y + 1][x] = path_char
                     x -= 4
 
