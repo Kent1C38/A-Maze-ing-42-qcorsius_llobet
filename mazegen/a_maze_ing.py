@@ -5,6 +5,7 @@ from .maze import Maze
 from .config import Configuration
 from sys import argv
 from os import system
+from typing import Tuple
 
 
 def change_config_display(config: Configuration) -> None:
@@ -46,6 +47,19 @@ def change_anim_display(maze: bool, path: bool) -> None:
     ])
 
 
+def change_color_display(colors: Tuple) -> None:
+    maze, path, entry, ex, ft = colors
+
+    InputHandler.change_options([
+        f"1 ║ {colorize('WALLS', maze)}",
+        f"2 ║ {colorize('PATH', path)}",
+        f"3 ║ {colorize('ENTRY', entry)}",
+        f"4 ║ {colorize('EXIT', ex)}",
+        f"5 ║ {colorize('42 LOGO', ft)}",
+        f"0 ║ {colorize('GO BACK', Color.RED)}",
+    ])
+
+
 def loop(lab: Maze) -> None:
     prompt: str
     err: bool = False
@@ -79,6 +93,7 @@ def loop(lab: Maze) -> None:
                 lab.generate(keep_seed=True, invert_solve=True)
             case "GoToColorOptions":
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "ChangeWalls":
                 InputHandler.goto("Color")
                 InputHandler.set_opened_name("Color Menu | Walls")
@@ -102,31 +117,37 @@ def loop(lab: Maze) -> None:
             case "SetGray":
                 lab.set_color(obj, Color.DARK_GRAY)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetRed":
                 lab.set_color(obj, Color.RED)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetGreen":
                 lab.set_color(obj, Color.GREEN)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetYellow":
                 lab.set_color(obj, Color.YELLOW)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetBlue":
                 lab.set_color(obj, Color.BLUE)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetPurple":
                 lab.set_color(obj, Color.PURPLE)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetCyan":
                 lab.set_color(obj, Color.CYAN)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "SetWhite":
                 lab.set_color(obj, Color.WHITE)
                 InputHandler.goto("Display")
+                change_color_display(lab.get_colors())
             case "GoBackToMain":
                 InputHandler.goto("Main")
-            case "GoBackToDisplay":
-                InputHandler.goto("Display")
             case "GoToAnimationOptions":
                 InputHandler.goto("Animation")
             case "HideMaze":

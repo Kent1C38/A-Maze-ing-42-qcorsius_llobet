@@ -102,7 +102,7 @@ class ColorMenu(BaseMenu):
             case 8:
                 return "SetWhite"
             case 0:
-                return "GoBackToDisplay"
+                return "GoToColorOptions"
             case _:
                 raise InvalidOption
 

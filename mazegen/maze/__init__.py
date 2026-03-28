@@ -287,3 +287,14 @@ class Maze:
 
     def get_bounds(self) -> Tuple[int, int]:
         return (self.__config.width, self.__config.height)
+
+    def get_colors(self) -> Tuple[Color, Color, Color, Color, Color]:
+        """
+        Returns the colors used to display the maze.
+
+        Used for UI.
+
+        Returns:
+            colors (Tuple): Colors
+        """
+        return self.__visualizer.get_colors()

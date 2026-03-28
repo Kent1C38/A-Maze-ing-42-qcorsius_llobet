@@ -11,6 +11,7 @@ from ..utils import (
 )
 from sys import stdout
 from time import sleep
+from typing import Tuple
 
 
 class Map:
@@ -210,3 +211,18 @@ class Map:
                 stdout.write(colorize("██", self.__path_color))
                 move_left(4)
             sleep(0.01)
+
+    def get_colors(self) -> Tuple[Color, Color, Color, Color, Color]:
+        """
+        Returns the colors of the maze.
+
+        Used for UI.
+
+        Returns:
+            colors (Tuple): Colors
+        """
+        return (self.__wall_color,
+                self.__path_color,
+                self.__entry_color,
+                self.__exit_color,
+                self.__42_color)
