@@ -49,8 +49,12 @@ def change_anim_display(maze: bool, path: bool) -> None:
 def loop(lab: Maze) -> None:
     prompt: str
     err: bool = False
-    err_msg: str = None
+    err_msg: str = ""
     obj: MazeObject
+    val: int | None
+    conf: Configuration
+    x: int | None
+    y: int | None
 
     while True:
         system("clear")
@@ -60,7 +64,7 @@ def loop(lab: Maze) -> None:
         if err:
             err = False
             InputHandler.display_error(err_msg)
-            err_msg = None
+            err_msg = ""
         InputHandler.display()
         try:
             prompt = InputHandler.prompt()
@@ -143,7 +147,7 @@ def loop(lab: Maze) -> None:
                 InputHandler.goto("Maze")
                 change_config_display(lab.get_config())
             case "ChangeWidth":
-                val: int | None = InputHandler.change_value("WIDTH:")
+                val = InputHandler.change_value("WIDTH:")
                 min_w: int = Limits.MIN_WIDTH.value
                 max_w: int = Limits.MAX_WIDTH.value
 
@@ -159,12 +163,12 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = f"WIDTH MUST BE LESSER OR EQUAL TO {max_w}"
                         continue
-                    conf: Configuration = lab.get_config()
+                    conf = lab.get_config()
 
                     conf.width = val
                     change_config_display(conf)
             case "ChangeHeight":
-                val: int | None = InputHandler.change_value("HEIGHT:")
+                val = InputHandler.change_value("HEIGHT:")
                 min_h: int = Limits.MIN_HEIGHT.value
                 max_h: int = Limits.MAX_HEIGHT.value
 
@@ -180,14 +184,12 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = f"HEIGHT MUST BE LESSER OR EQUAL TO {max_h}"
                         continue
-                    conf: Configuration = lab.get_config()
+                    conf = lab.get_config()
 
                     conf.height = val
                     change_config_display(conf)
             case "ChangeEntryPosition":
-                x: int | None
-                y: int | None
-                conf: Configuration = lab.get_config()
+                conf = lab.get_config()
 
                 x = InputHandler.change_value("X:")
                 if not isinstance(x, int):
@@ -216,9 +218,7 @@ def loop(lab: Maze) -> None:
                         conf.entry_pos.y = y
                         change_config_display(conf)
             case "ChangeExitPosition":
-                x: int | None
-                y: int | None
-                conf: Configuration = lab.get_config()
+                conf = lab.get_config()
 
                 x = InputHandler.change_value("X:")
                 if not isinstance(x, int):
@@ -247,16 +247,16 @@ def loop(lab: Maze) -> None:
                         conf.exit_pos.y = y
                         change_config_display(conf)
             case "ChangePerfect":
-                conf: Configuration = lab.get_config()
+                conf = lab.get_config()
                 conf.perfect = not conf.perfect
                 change_config_display(conf)
             case "ChangeSeed":
-                val: int | None = InputHandler.change_value("SEED:")
+                val = InputHandler.change_value("SEED:")
 
                 if not isinstance(val, int):
                     err = True
                 else:
-                    conf: Configuration = lab.get_config()
+                    conf = lab.get_config()
 
                     conf.seed = val
                     change_config_display(conf)
@@ -265,7 +265,7 @@ def loop(lab: Maze) -> None:
                 exit(0)
 
 
-def run():
+def run() -> None:
     if len(argv) <= 1:
         print(f"Usage: python3 {argv[0]} <config file path>")
     else:

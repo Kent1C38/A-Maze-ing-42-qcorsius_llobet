@@ -13,7 +13,7 @@ setrecursionlimit(10000)
 
 
 class Maze:
-    def __init__(self, config: Configuration):
+    def __init__(self, config: Configuration) -> None:
         self.__maze = [[Cell()
                         for _ in range(config.width)]
                        for _ in range(config.height)]
@@ -171,7 +171,7 @@ class Maze:
                       self.__config.exit_pos)
         if invert_solve:
             self.__solved = not self.__solved
-        if self.__solved:
+        if self.__solved and path:
             self.__visualizer.add_path(
                 self.__config.entry_pos.x,
                 self.__config.entry_pos.y,
@@ -182,6 +182,7 @@ class Maze:
         self.gen_ft_logo()
 
         stdout.flush()
+        return True
 
     def crawl(self, x: int, y: int, rng: Random) -> bool:
         self.get()[y][x].is_visited = True
@@ -261,7 +262,7 @@ class Maze:
             case "Path":
                 return self.__anim_path
             case _:
-                return None
+                return False
 
     def get_status(self) -> bool:
         return self.__generate
@@ -274,33 +275,3 @@ class Maze:
 
     def get_bounds(self) -> Tuple[int, int]:
         return (self.__config.width, self.__config.height)
-
-    def resolve_path(self) -> str:
-        entry = self.__config.entry_pos
-        exitt = self.__config.exit_pos
-
-        def calc_rel_dist(current: Position, objective: Position):
-            return (objective.x - current.x, objective.y - current.y)
-
-        def a_star(maze: list[list[Cell]], pos: Position,
-                   path: str = "") -> str:
-            open_walls = [f for f in Facing
-                          if not self.get()[pos.y][pos.x].wall_request(f)]
-            directions = dict()
-            for face in open_walls:
-                dx, dy = calc_rel_dist(Position(
-                    x=pos.x + face.dx,
-                    y=pos.y + face.dy
-                ), exitt)
-                directions[face] = dx + dy
-            directions = sorted(directions.keys(), key=lambda x: directions[x])
-            print(directions)
-
-        a_star(self.get(), entry)
-
-
-if __name__ == "__main__":
-    lab = Maze(Configuration.new("config.txt"))
-    lab.generate()
-
-    lab.resolve_path()

@@ -56,10 +56,10 @@ class Map:
             j += 4
 
     def add_path(self: "Map", x: int, y: int, path: str) -> None:
-        x: int = x * 4
-        y: int = y * 2
         path_char: str = colorize("█", self.__path_color)
 
+        x *= 4
+        y *= 2
         for index, char in enumerate(path):
             if not index == 0:
                 self.__map[y + 1][x + 1] = path_char
@@ -115,7 +115,7 @@ class Map:
         self.add_cell(x + 6, y + 4, ft_char)
 
     def visualize(self: "Map") -> None:
-        string: map = ""
+        string: str = ""
 
         for row in self.__map:
             for char in row:
