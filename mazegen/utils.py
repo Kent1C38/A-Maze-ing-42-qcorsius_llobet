@@ -144,3 +144,9 @@ def move_up(amt: int) -> None:
 def move_down(amt: int) -> None:
     """Moves the cursor downward X times."""
     stdout.write(f"\033[{amt}B\033[0")
+
+
+def move_to(x: int, y: int) -> None:
+    """Moves the cursor to X and Y."""
+    stdout.write(f"\033[{y};{x}H\033[0")
+    stdout.write("m")

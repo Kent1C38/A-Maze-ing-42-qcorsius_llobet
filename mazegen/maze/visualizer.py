@@ -1,7 +1,14 @@
 from ..config import Configuration
 from ..position import Position
 from ..enums import Color, MazeObject
-from ..utils import colorize, move_down, move_up, move_left, move_right
+from ..utils import (
+    colorize,
+    move_down,
+    move_up,
+    move_left,
+    move_right,
+    move_to
+)
 from sys import stdout
 from time import sleep
 
@@ -15,6 +22,7 @@ class Map:
         self.__path_color: Color = Color.BLUE
         self.__entry_color: Color = Color.GREEN
         self.__exit_color: Color = Color.RED
+        self.__path: str = ""
         self.__42_color: Color = Color.CYAN
 
     def get_width(self: "Map") -> int:
@@ -58,6 +66,7 @@ class Map:
     def add_path(self: "Map", x: int, y: int, path: str) -> None:
         path_char: str = colorize("█", self.__path_color)
 
+        self.__path = path
         x *= 4
         y *= 2
         for index, char in enumerate(path):
@@ -145,6 +154,7 @@ class Map:
         move_left(w * 4)
         move_down(y * 2 + 1)
         move_right(x * 4 + 1)
+
         stdout.flush()
         if not wall & 0x1:
             move_up(1)
@@ -168,3 +178,35 @@ class Map:
         move_left(w * 4)
         move_right((w - x) * 4 - 2)
         sleep(0.01)
+
+    def animate_path(self) -> None:
+        x: int = self.__config.entry_pos.x
+        y: int = self.__config.entry_pos.y
+
+        move_to(x * 4 + 2, y * 2 + 2)
+        for c in self.__path:
+            stdout.flush()
+            stdout.write(colorize("██", self.__path_color))
+            move_left(2)
+            if c == "N":
+                y -= 1
+                move_up(1)
+                stdout.write(colorize("██", self.__path_color))
+                move_up(1)
+                move_left(2)
+            elif c == "E":
+                x += 1
+                move_right(2)
+                stdout.write(colorize("██", self.__path_color))
+            elif c == "S":
+                y += 1
+                move_down(1)
+                stdout.write(colorize("██", self.__path_color))
+                move_down(1)
+                move_left(2)
+            elif c == "W":
+                x -= 1
+                move_left(2)
+                stdout.write(colorize("██", self.__path_color))
+                move_left(4)
+            sleep(0.01)

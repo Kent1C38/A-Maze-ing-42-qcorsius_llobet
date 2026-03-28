@@ -171,7 +171,7 @@ class Maze:
                       self.__config.exit_pos)
         if invert_solve:
             self.__solved = not self.__solved
-        if self.__solved and path:
+        if self.__solved and path and not self.__anim_path:
             self.__visualizer.add_path(
                 self.__config.entry_pos.x,
                 self.__config.entry_pos.y,
@@ -181,6 +181,15 @@ class Maze:
         self.__generate = True
         self.gen_ft_logo()
 
+        if self.__solved and self.__anim_path:
+            if not self.__anim_maze:
+                self.visualize()
+            self.__visualizer.add_path(
+                self.__config.entry_pos.x,
+                self.__config.entry_pos.y,
+                path
+            )
+            self.__visualizer.animate_path()
         stdout.flush()
         return True
 
@@ -241,12 +250,15 @@ class Maze:
 
     def set_color(self, obj: MazeObject, color: Color) -> None:
         maze_anim: bool = self.__anim_maze
+        path_anim: bool = self.__anim_path
 
         self.__visualizer.change_color(obj, color)
         self.__anim_maze = False
+        self.__anim_path = False
         if self.__generate:
             self.generate(True)
             self.__anim_maze = maze_anim
+            self.__anim_path = path_anim
 
     def switch_animation_state(self, obj: MazeObject) -> None:
         match obj.value:
