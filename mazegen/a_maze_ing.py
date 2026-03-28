@@ -196,7 +196,7 @@ def loop(lab: Maze) -> None:
                     err = True
                     err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
                 else:
-                    if x < 0 or x > conf.width:
+                    if x < 0 or x > conf.width - 1:
                         err = True
                         err_msg = "ENTRY CANNOT BE OFF BOUNDS"
                         continue
@@ -206,7 +206,7 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
                     else:
-                        if y < 0 or y > conf.height:
+                        if y < 0 or y > conf.height - 1:
                             err = True
                             err_msg = "ENTRY CANNOT BE OFF BOUNDS"
                             continue
@@ -225,7 +225,7 @@ def loop(lab: Maze) -> None:
                     err = True
                     err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
                 else:
-                    if x < 0 or x > conf.width:
+                    if x < 0 or x > conf.width - 1:
                         err = True
                         err_msg = "EXIT CANNOT BE OFF BOUNDS"
                         continue
@@ -235,7 +235,7 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
                     else:
-                        if y < 0 or y > conf.height:
+                        if y < 0 or y > conf.height - 1:
                             err = True
                             err_msg = "EXIT CANNOT BE OFF BOUNDS"
                             continue
