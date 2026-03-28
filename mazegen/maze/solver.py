@@ -29,7 +29,6 @@ class Node:
 def get_valid_neighbors(maze: list[list[Cell]],
                         position: Position) -> list[Position]:
     neighbours = []
-
     for direction in [f for f in Facing if not
                       maze[position.y][position.x].wall_request(f)]:
         neigh = Position(x=position.x + direction.dx,
