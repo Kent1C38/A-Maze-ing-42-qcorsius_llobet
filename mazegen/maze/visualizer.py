@@ -127,6 +127,7 @@ class Map:
     def visualize(self: "Map") -> None:
         string: str = ""
 
+        move_to(0, 0)
         for row in self.__map:
             for char in row:
                 string += char

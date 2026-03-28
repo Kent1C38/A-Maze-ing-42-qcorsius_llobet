@@ -123,9 +123,9 @@ class Maze:
         system("clear")
         self.__visualizer.reset()
         self.__visualizer.add_walls(self.convert_to_hex_str())
-        if self.__anim_maze:
+        if self.__anim_maze and not invert_solve:
             self.visualize()
-        self.crawl(start.x, start.y, rng)
+        self.crawl(start.x, start.y, rng, invert_solve)
 
         if not self.__config.perfect:
             chance = 70.0
@@ -182,8 +182,7 @@ class Maze:
         self.gen_ft_logo()
 
         if self.__solved and self.__anim_path:
-            if not self.__anim_maze:
-                self.visualize()
+            self.visualize()
             self.__visualizer.add_path(
                 self.__config.entry_pos.x,
                 self.__config.entry_pos.y,
@@ -193,7 +192,8 @@ class Maze:
         stdout.flush()
         return True
 
-    def crawl(self, x: int, y: int, rng: Random) -> bool:
+    def crawl(self, x: int, y: int, rng: Random,
+              path_solve: bool = False) -> bool:
         self.get()[y][x].is_visited = True
         directions = [f for f in Facing if self.get()[y][x].wall_request(f)]
         while directions:
@@ -220,11 +220,11 @@ class Maze:
                 Facing.EAST: Facing.WEST
             }[f])
 
-            if self.__anim_maze:
+            if self.__anim_maze and not path_solve:
                 self.__visualizer.crawl(self.get()[y][x].get_active_walls(),
                                         x, y, self.__config.width,
                                         self.__config.height)
-            self.crawl(nx, ny, rng)
+            self.crawl(nx, ny, rng, path_solve)
         return True
 
     def new_rand_seed(self) -> None:
