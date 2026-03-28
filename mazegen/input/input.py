@@ -14,7 +14,7 @@ from ..enums import Color
 
 
 class MenuNotFoundError(BaseException):
-    def __init__(self, menu: str):
+    def __init__(self, menu: str) -> None:
         super().__init__(f"Cannot go to menu \"{menu}\"")
 
 # --- CLASSES -----------------------------------------------------------------
@@ -69,10 +69,12 @@ class InputHandler:
             f"0 ║ {colorize('GO BACK', Color.RED)}",
         ])
     }
-    __opened: BaseMenu = __menus.get("Main")
+    __opened: BaseMenu | None = __menus.get("Main")
 
     @classmethod
     def goto(cls, menu: str) -> None:
+        if not isinstance(cls.__opened, BaseMenu):
+            raise TypeError("Opened menu must be a valid Menu object")
         m: BaseMenu | None = cls.__menus.get(menu)
 
         if not m:
@@ -81,10 +83,14 @@ class InputHandler:
 
     @classmethod
     def display(cls) -> None:
+        if not isinstance(cls.__opened, BaseMenu):
+            raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.display()
 
     @classmethod
-    def prompt(cls) -> None:
+    def prompt(cls) -> str:
+        if not isinstance(cls.__opened, BaseMenu):
+            raise TypeError("Opened menu must be a valid Menu object")
         return cls.__opened.prompt()
 
     @classmethod
@@ -107,10 +113,14 @@ class InputHandler:
 
     @classmethod
     def set_opened_name(cls, name: str) -> None:
+        if not isinstance(cls.__opened, BaseMenu):
+            raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.set_name(name)
 
     @classmethod
     def change_options(cls, options: List[str]) -> None:
+        if not isinstance(cls.__opened, BaseMenu):
+            raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.change_options(options)
 
     @classmethod

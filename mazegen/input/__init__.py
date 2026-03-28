@@ -7,8 +7,18 @@ from .menus import (BaseMenu,
                     DisplayMenu,
                     AnimMenu,
                     OptionsMenu,
-                    MazeMenu,)
+                    MazeMenu)
 from .input import InputHandler
+from typing import Sequence
 
-__all__ = [BaseMenu, MainMenu, ColorMenu, InvalidOption, DisplayMenu, AnimMenu,
-           InputHandler, OptionsMenu, MazeMenu]
+__all__: Sequence[str] = [
+    "BaseMenu",
+    "MainMenu",
+    "ColorMenu",
+    "InvalidOption",
+    "DisplayMenu",
+    "AnimMenu",
+    "InputHandler",
+    "OptionsMenu",
+    "MazeMenu"
+]

@@ -46,7 +46,7 @@ class BaseMenu(ABC):
         self.__name = name
 
     @abstractmethod
-    def prompt(self) -> None:
+    def prompt(self) -> str:
         pass
 
     def change_options(self, options: List[str]) -> None:

@@ -6,12 +6,13 @@ import heapq
 
 
 class Node:
-    def __init__(self, x: int, y: int, cost_from_start: int, goal: Position):
+    def __init__(self, x: int, y: int, cost_from_start: int,
+                 goal: Position) -> None:
         self.coords = Position(x=x, y=y)
         self.cost_from_start = cost_from_start
         self.estimated_distance = self.coords.heuristic(goal)
         self.total_cost = self.cost_from_start + self.estimated_distance
-        self.parent = None
+        self.parent: Node | None = None
 
     def set_parent(self, parent: "Node") -> None:
         self.parent = parent
@@ -25,7 +26,8 @@ class Node:
         return self.coords.y
 
 
-def get_valid_neighbors(maze: list[list[Cell]], position: Position):
+def get_valid_neighbors(maze: list[list[Cell]],
+                        position: Position) -> list[Position]:
     neighbours = []
     for direction in [f for f in Facing if not
                       maze[position.y][position.x].wall_request(f)]:
@@ -36,7 +38,8 @@ def get_valid_neighbors(maze: list[list[Cell]], position: Position):
     return neighbours
 
 
-def a_star(maze: list[list[Cell]], start: Position, goal: Position) -> str:
+def a_star(maze: list[list[Cell]], start: Position,
+           goal: Position) -> str | None:
     start_node = Node(start.x, start.y, 0, goal)
 
     counter = 0
@@ -45,12 +48,12 @@ def a_star(maze: list[list[Cell]], start: Position, goal: Position) -> str:
     closed_set = set()
 
     while open_list:
-        _, _, current_pos = heapq.heappop(open_list)
-        current_pos = current_pos.coords
-        current_node = open_dict[current_pos.get()]
+        _, _, current_node = heapq.heappop(open_list)
+        current_pos: Position = current_node.coords
+        curr_node: Node = open_dict[current_pos.get()]
 
         if current_pos.get() == goal.get():
-            return reconstruct_path(current_node)
+            return reconstruct_path(curr_node)
 
         closed_set.add(current_pos.get())
 
@@ -60,7 +63,7 @@ def a_star(maze: list[list[Cell]], start: Position, goal: Position) -> str:
             if key in closed_set:
                 continue
 
-            tentative_cost = current_node.cost_from_start + 1
+            tentative_cost = curr_node.cost_from_start + 1
 
             if key not in open_dict:
                 neighbor = Node(
@@ -88,11 +91,10 @@ def a_star(maze: list[list[Cell]], start: Position, goal: Position) -> str:
                     counter += 1
                     heapq.heappush(
                         open_list, (neighbor.total_cost, counter, neighbor))
-
     return None
 
 
-def reconstruct_path(goal_node: Node) -> str:
+def reconstruct_path(goal_node: Node) -> str | None:
     path = ""
     current = goal_node
 

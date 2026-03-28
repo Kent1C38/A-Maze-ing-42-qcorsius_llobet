@@ -1,14 +1,14 @@
 from .position import Position
 from .utils import bool_from_string, is_pos_valid, get_42logo_cells
 from .enums import Limits
-from typing import Optional
+from typing import Optional, Any
 from pydantic import BaseModel, Field, model_validator
 from random import randint
 import sys
 
 
 class InvalidConfiguration(Exception):
-    def __init__(self, args):
+    def __init__(self, args: str) -> None:
         super().__init__(args)
 
 
@@ -48,12 +48,12 @@ class Configuration(BaseModel):
                                        "cells")
         return self
 
-    def replace_seed(self, new_seed: int):
+    def replace_seed(self, new_seed: int) -> None:
         self.seed = new_seed
 
     @staticmethod
     def new(config_path: str) -> "Configuration":
-        temp = dict()
+        temp: dict[str, Any] = dict()
         try:
             with open(config_path, "r") as file:
                 for line in file:
@@ -86,12 +86,25 @@ class Configuration(BaseModel):
         except Exception as e:
             raise Exception(f"Error occured during config file reading: {e}")
 
+        w: int = int(str(temp.get("width", None)))
+        h: int = int(str(temp.get("height", None)))
+        seed: int = int(temp.get("seed",
+                                 randint(-sys.maxsize - 1, sys.maxsize)))
+        out: str = str(temp.get("output_file", None))
+        perf: bool = bool(temp.get("perfect", None))
+        entry: Position | Any | None = temp.get("entry", None)
+        ex: Position | Any | None = temp.get("exit", None)
+
+        if not isinstance(entry, Position):
+            raise TypeError("Entry must be a Position object")
+        if not isinstance(ex, Position):
+            raise TypeError("Exit must be a Position object")
         return Configuration(
-            width=temp.get("width", None),
-            height=temp.get("height", None),
-            seed=temp.get("seed", randint(-sys.maxsize - 1, sys.maxsize)),
-            output_file=temp.get("output_file", None),
-            perfect=temp.get("perfect", None),
-            entry_pos=temp.get("entry", None),
-            exit_pos=temp.get("exit", None)
+            width=w,
+            height=h,
+            seed=seed,
+            output_file=out,
+            perfect=perf,
+            entry_pos=entry,
+            exit_pos=ex
         )

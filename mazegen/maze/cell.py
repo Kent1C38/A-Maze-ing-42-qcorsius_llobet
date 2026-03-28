@@ -25,7 +25,7 @@ class Facing(Enum):
 
 
 class Cell:
-    def __init__(self):
+    def __init__(self) -> None:
         self.__walls = 0b1111
         self.is_visited = False
         self.is_unbreakable = False
