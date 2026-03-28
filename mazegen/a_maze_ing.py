@@ -9,6 +9,20 @@ from typing import Tuple
 
 
 def change_config_display(config: Configuration) -> None:
+    """
+    Changes the config menu.
+
+    When called, takes the passed config and displays the values from the
+    config.
+
+    This is used to update the UI with the correct values.
+
+    Args:
+        config (Configuration): The configuration to take the values from.
+
+    Returns:
+        None (None):
+    """
     enx: int = config.entry_pos.x
     eny: int = config.entry_pos.y
     exx: int = config.exit_pos.x
@@ -35,6 +49,19 @@ def change_config_display(config: Configuration) -> None:
 
 
 def change_anim_display(maze: bool, path: bool) -> None:
+    """
+    Changes the animation menu.
+
+    Takes the maze and path animation states and updates the UI based on those
+    states.
+
+    Args:
+        maze (bool): The animation state of the maze.
+        path (bool): The animation state of the path.
+
+    Returns:
+        None (None):
+    """
     on: Color = Color.GREEN
     off: Color = Color.RED
     maze_label: str = colorize("MAZE ANIMATION", maze and on or off)
@@ -48,6 +75,18 @@ def change_anim_display(maze: bool, path: bool) -> None:
 
 
 def change_color_display(colors: Tuple) -> None:
+    """
+    Changes the color menu.
+
+    Takes a tuple of colors corresponding to the color of all maze elements and
+    updates the UI according to those.
+
+    Args:
+        colors (Tuple): The colors of the maze.
+
+    Returns:
+        None (None):
+    """
     maze, path, entry, ex, ft = colors
 
     InputHandler.change_options([
@@ -61,6 +100,27 @@ def change_color_display(colors: Tuple) -> None:
 
 
 def loop(lab: Maze) -> None:
+    """
+    The main loop of the program.
+
+    This loop is the heart of the program. It orchestrates the whole
+    architecture and makes it all work together.
+
+    It is structure in several steps:
+
+    1) Clears the terminal.
+    2) If a maze has been generated, displays it.
+    3) Displays the active menu.
+    4) Prompts the user with an option.
+    5) Execute commands following the user's option.
+    6) Repeats this process until the program is stopped.
+
+    Args:
+        lab (Maze): The maze object.
+
+    Returns:
+        None (None):
+    """
     prompt: str
     err: bool = False
     err_msg: str = ""
@@ -296,6 +356,22 @@ def loop(lab: Maze) -> None:
 
 
 def run() -> None:
+    """
+    Starts the program.
+
+    This is the main entry point. This is where the program gets launched.
+    It will first check the user input. If there is no config file passed,
+    displays a usage message and stops.
+
+    Otherwise, generates the first maze in the output file and starts the main
+    loop.
+
+    Args:
+        None (None):
+
+    Returns:
+        None (None):
+    """
     if len(argv) <= 1:
         print(f"Usage: python3 {argv[0]} <config file path>")
     else:

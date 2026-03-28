@@ -15,6 +15,7 @@ class Position(BaseModel):
 
     Returns:
         position (Position): The 2D position.
+
     Raises:
         ValidationError:
     """
@@ -64,6 +65,9 @@ class Position(BaseModel):
         """
         Returns the coordinates of the Position as a tuple.
 
+        Args:
+            None (None):
+
         Returns:
             coordinates (tuple[int, int]): The coordinates of the Position.
         """
@@ -72,6 +76,9 @@ class Position(BaseModel):
     def __str__(self) -> str:
         """
         To format printing.
+
+        Args:
+            None (None):
 
         Returns:
             str (str): The formatted string.

@@ -127,26 +127,66 @@ def bold(str: str) -> str:
 
 
 def move_left(amt: int) -> None:
-    """Moves the cursor to the left X times."""
+    """
+    Moves the cursor to the left X times.
+
+    Args:
+        amt (int): Move X times.
+
+    Returns:
+        None (None):
+    """
     stdout.write(f"\033[{amt}D\033[0")
 
 
 def move_right(amt: int) -> None:
-    """Moves the cursor to the right X times."""
+    """
+    Moves the cursor to the right X times.
+
+    Args:
+        amt (int): Move X times.
+
+    Returns:
+        None (None):
+    """
     stdout.write(f"\033[{amt}C\033[0")
 
 
 def move_up(amt: int) -> None:
-    """Moves the cursor upward X times."""
+    """
+    Moves the cursor upward X times.
+
+    Args:
+        amt (int): Move X times.
+
+    Returns:
+        None (None):
+    """
     stdout.write(f"\033[{amt}A\033[0")
 
 
 def move_down(amt: int) -> None:
-    """Moves the cursor downward X times."""
+    """
+    Moves the cursor downward X times.
+
+    Args:
+        amt (int): Move X times.
+
+    Returns:
+        None (None):
+    """
     stdout.write(f"\033[{amt}B\033[0")
 
 
 def move_to(x: int, y: int) -> None:
-    """Moves the cursor to X and Y."""
+    """
+    Moves the cursor to X and Y.
+
+    Args:
+        amt (int): Move X times.
+
+    Returns:
+        None (None):
+    """
     stdout.write(f"\033[{y};{x}H\033[0")
     stdout.write("m")

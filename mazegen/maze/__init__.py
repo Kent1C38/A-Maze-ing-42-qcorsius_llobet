@@ -181,7 +181,7 @@ class Maze:
         self.__generate = True
         self.gen_ft_logo()
 
-        if self.__solved and self.__anim_path:
+        if self.__solved and path and self.__anim_path:
             self.visualize()
             self.__visualizer.add_path(
                 self.__config.entry_pos.x,
@@ -229,7 +229,7 @@ class Maze:
 
     def new_rand_seed(self) -> None:
         rand = Random(self.__config.seed)
-        self.__config.replace_seed(rand.randint(-maxsize - 1, maxsize))
+        self.__config.seed = rand.randint(-maxsize - 1, maxsize)
 
     def reset_visited(self) -> None:
         for line in self.get():
