@@ -66,7 +66,7 @@ def loop(lab: Maze) -> None:
     err_msg: str = ""
     obj: MazeObject
     val: int | None
-    conf: Configuration
+    conf: Configuration = lab.get_config()
     x: int | None
     y: int | None
 
@@ -184,7 +184,14 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = f"WIDTH MUST BE LESSER OR EQUAL TO {max_w}"
                         continue
-                    conf = lab.get_config()
+                    if conf.entry_pos.x > val:
+                        err = True
+                        err_msg = "ENTRY CANNOT BE OFF BOUNDS"
+                        continue
+                    if conf.exit_pos.x > val:
+                        err = True
+                        err_msg = "EXIT CANNOT BE OFF BOUNDS"
+                        continue
 
                     conf.width = val
                     change_config_display(conf)
@@ -205,14 +212,20 @@ def loop(lab: Maze) -> None:
                         err = True
                         err_msg = f"HEIGHT MUST BE LESSER OR EQUAL TO {max_h}"
                         continue
-                    conf = lab.get_config()
+                    if conf.entry_pos.y > val:
+                        err = True
+                        err_msg = "ENTRY CANNOT BE OFF BOUNDS"
+                        continue
+                    if conf.exit_pos.y > val:
+                        err = True
+                        err_msg = "EXIT CANNOT BE OFF BOUNDS"
+                        continue
 
                     conf.height = val
                     change_config_display(conf)
             case "ChangeEntryPosition":
-                conf = lab.get_config()
-
                 x = InputHandler.change_value("X:")
+
                 if not isinstance(x, int):
                     err = True
                     err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
@@ -239,9 +252,8 @@ def loop(lab: Maze) -> None:
                         conf.entry_pos.y = y
                         change_config_display(conf)
             case "ChangeExitPosition":
-                conf = lab.get_config()
-
                 x = InputHandler.change_value("X:")
+
                 if not isinstance(x, int):
                     err = True
                     err_msg = "INVALID VALUE. PLEASE ENTER A NUMBER"
@@ -268,7 +280,6 @@ def loop(lab: Maze) -> None:
                         conf.exit_pos.y = y
                         change_config_display(conf)
             case "ChangePerfect":
-                conf = lab.get_config()
                 conf.perfect = not conf.perfect
                 change_config_display(conf)
             case "ChangeSeed":
@@ -277,8 +288,6 @@ def loop(lab: Maze) -> None:
                 if not isinstance(val, int):
                     err = True
                 else:
-                    conf = lab.get_config()
-
                     conf.seed = val
                     change_config_display(conf)
             case "Exit":
