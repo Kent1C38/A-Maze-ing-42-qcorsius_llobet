@@ -2,6 +2,12 @@ from enum import Enum
 
 
 class Color(Enum):
+    """
+    The Color enum.
+
+    Represents most color values in ANSI escape characters. Useful when
+    coloring text.
+    """
     BLACK = 30
     DARK_RED = 31
     DARK_GREEN = 32

@@ -121,15 +121,60 @@ class Cell:
         self.is_unbreakable = is_unbreakable
 
     def wall_request(self, face: Facing) -> bool:
+        """
+        Checks for walls.
+
+        Used for maze logic.
+
+        Args:
+            face (Facing): An enum representing the wall.
+
+        Returns:
+            bool (bool):
+        """
         return bool(self.__walls & face.bin_value)
 
     def break_wall(self, facing: Facing) -> None:
+        """
+        Breaks a wall.
+
+        Used to break walls in the maze, as well as making it non-perfect if
+        toggled.
+
+        Args:
+            facing (Facing): An enum representing the wall.
+
+        Returns:
+            none (None):
+        """
         self.__walls -= facing.bin_value
 
     def get_active_walls(self) -> int:
+        """
+        Gets the walls of a cell.
+
+        Returns all walls of a cell as an integer.
+
+        Args:
+            none (None):
+
+        Returns:
+            walls (int): The active walls.
+        """
         return self.__walls
 
     def reset(self) -> None:
+        """
+        Resets the cell to its initial state.
+
+        Useful when regenerating a maze.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         self.__walls = 0b1111
         self.is_visited = False
         self.is_unbreakable = False

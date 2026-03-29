@@ -13,7 +13,27 @@ setrecursionlimit(10000)
 
 
 class Maze:
+    """
+    The Maze class.
+
+    This is by far the most important class of the entire program.
+    A maze object contains all the logic ranging from generation algorithms, to
+    solving algorithms, to exporting it as a hexadecimal representation of its
+    walls.
+    """
     def __init__(self, config: Configuration) -> None:
+        """
+        Initializes a new Maze object.
+
+        Initializes a new Maze. The properties of the maze all depends on the
+        configuration passed as parameter.
+
+        Args:
+            config (Configuration): The configuration of the maze.
+
+        Returns:
+            none (None):
+        """
         self.__maze = [[Cell()
                         for _ in range(config.width)]
                        for _ in range(config.height)]
@@ -28,9 +48,31 @@ class Maze:
         self.__anim_path: bool = False
 
     def get(self) -> list[list[Cell]]:
+        """
+        Returns the maze.
+
+        Returns the maze with all its cells.
+
+        Args:
+            none (None):
+
+        Returns:
+            maze (list[list[Cell]]): The maze.
+        """
         return self.__maze
 
     def convert_to_hex_str(self) -> str:
+        """
+        Convers the walls to hexadecimal representation.
+
+        This is useful to export the maze into the output file.
+
+        Args:
+            none (None):
+
+        Returns:
+            hex (str): The hexadecimal representation.
+        """
         string = ""
         lab: list[list[Cell]] = self.__maze
         for line in lab:
@@ -41,6 +83,18 @@ class Maze:
         return string
 
     def gen_ft_logo(self) -> None:
+        """
+        Generates the 42 logo.
+
+        The size of the logo does not change. The position however varies
+        depending on the size of the maze, but will always stay at the center.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         x_center = self.__config.width // 2
         y_center = self.__config.height // 2
         start = Position(x=x_center - 3, y=y_center - 2)
@@ -52,11 +106,37 @@ class Maze:
         self.__visualizer.add_ft(start.x, start.y)
 
     def would_excede_room_limit(self, x: int, y: int, facing: Facing) -> bool:
+        """
+        Checks if breaking a cell would make a too large room.
+
+        Takes the position of a cell and checks on all sides if breaking the
+        walls would make a room too large. Returns True if too large, False
+        otherwise.
+
+        Args:
+            x (int): The X coordinate of the cell.
+            y (int): The Y coordinate of the cell.
+            facing (Facing): An enum for the walls.
+
+        Returns:
+            bool (bool): True if would be too large, False otherwise.
+        """
         grid = self.get()
         target_x = x + facing.dx
         target_y = y + facing.dy
 
         def opposite(f: Facing) -> Facing:
+            """
+            Returns the opposite walls.
+
+            Checks all the walls and returns its opposite.
+
+            Args:
+                f (Facing): The wall.
+
+            Returns:
+                f (Facing): The opposite sides.
+            """
             return {
                 Facing.NORTH: Facing.SOUTH,
                 Facing.SOUTH: Facing.NORTH,
@@ -111,6 +191,19 @@ class Maze:
 
     def generate(self, keep_seed: bool = False,
                  invert_solve: bool = False) -> bool:
+        """
+        Generates a new maze.
+
+        This is the main function that generates a maze. It orchestrates the
+        whole process and returns True if everything went well.
+
+        Args:
+            keep_seed (bool): Whether to keep the previous seed or not.
+            invert_solve (bool): Accounts for the path solving.
+
+        Returns:
+            bool (bool): True if everything went well.
+        """
         self.reset()
         if not keep_seed:
             self.new_rand_seed()
@@ -194,6 +287,22 @@ class Maze:
 
     def crawl(self, x: int, y: int, rng: Random,
               path_solve: bool = False) -> bool:
+        """
+        Carves path in the maze.
+
+        This is one of the functions that does the maze generation algorithm.
+        It will carve out the pathways in the maze recursively. This is more
+        commonly known as Recursive Backtracking.
+
+        Args:
+            x (int): The X coordinate of the current cell.
+            y (int): The Y coordinate of the current cell.
+            rng (Random): Dictates which way the algorithm goes.
+            path_solve (bool): Sets if the crawl animation should play or not.
+
+        Returns:
+            bool (bool): Returns True if everything went well.
+        """
         self.get()[y][x].is_visited = True
         directions = [f for f in Facing if self.get()[y][x].wall_request(f)]
         while directions:
@@ -230,15 +339,49 @@ class Maze:
         return True
 
     def new_rand_seed(self) -> None:
+        """
+        Sets a new random seed.
+
+        Sets the seed of the maze to a new random seed.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         rand = Random(self.__config.seed)
         self.__config.seed = rand.randint(-maxsize - 1, maxsize)
 
     def reset_visited(self) -> None:
+        """
+        Sets all cells to not visited.
+
+        This is used to reset the maze and allow a new generation of that maze.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         for line in self.get():
             for cell in line:
                 cell.is_visited = True
 
     def reset(self) -> None:
+        """
+        Resets the maze.
+
+        Resets all the cells on the maze and reinitializes the maze map with
+        width and height from the config.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         for line in self.get():
             for cell in line:
                 cell.reset()
@@ -248,9 +391,33 @@ class Maze:
         self.__visualizer.reset()
 
     def visualize(self) -> None:
+        """
+        Calls the visualize method from the visualizer.
+
+        As you do not have access to the visualizer object. This method calls
+        its method instead.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         self.__visualizer.visualize()
 
     def set_color(self, obj: MazeObject, color: Color) -> None:
+        """
+        Sets the color of a maze object.
+
+        Takes a maze object and sets its color to the specified color.
+
+        Args:
+            obj (MazeObject): The maze object.
+            color (Color): An enum representing a Color.
+
+        Returns:
+            none (None):
+        """
         maze_anim: bool = self.__anim_maze
         path_anim: bool = self.__anim_path
 
@@ -263,6 +430,17 @@ class Maze:
             self.__anim_path = path_anim
 
     def switch_animation_state(self, obj: MazeObject) -> None:
+        """
+        Switches the animation state of a maze object.
+
+        Inverts the animation state of the specified object.
+
+        Args:
+            obj (MazeObject): The maze object.
+
+        Returns:
+            none (None):
+        """
         match obj.value:
             case "Walls":
                 self.__anim_maze = not self.__anim_maze
@@ -270,6 +448,18 @@ class Maze:
                 self.__anim_path = not self.__anim_path
 
     def get_animation_state(self, obj: MazeObject) -> bool:
+        """
+        Gets the animation state of a maze object.
+
+        Returns the animation state of the maze objects like the walls and
+        path.
+
+        Args:
+            obj (MazeObject): The maze object.
+
+        Returns:
+            state (bool): The state of the object.
+        """
         match obj.value:
             case "Walls":
                 return self.__anim_maze
@@ -279,15 +469,61 @@ class Maze:
                 return False
 
     def get_status(self) -> bool:
+        """
+        Returns the status of the maze.
+
+        If this returns True, that means the maze has been generated already,
+        False otherwise.
+
+        Args:
+            none (None):
+
+        Returns:
+            status (bool): The state of the maze.
+        """
         return self.__generate
 
     def hide(self) -> None:
+        """
+        Sets the maze to be hidden.
+
+        Sets the state of the maze to be hidden. If hidden, the visualizer will
+        not display it.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+        """
         self.__generate = False
 
     def get_config(self) -> Configuration:
+        """
+        Gets the configuration of the maze.
+
+        Returns the configuration used internally by the maze.
+
+        Args:
+            none (None):
+
+        Returns:
+            config (Configuration): The configuration of the maze.
+        """
         return self.__config
 
     def get_bounds(self) -> Tuple[int, int]:
+        """
+        Gets the bounds of the maze.
+
+        Returns the width and height of the maze as a tuple.
+
+        Args:
+            none (None):
+
+        Returns:
+            bounds (Tuple[int, int]): The bounds of the maze.
+        """
         return (self.__config.width, self.__config.height)
 
     def get_colors(self) -> Tuple[Color, Color, Color, Color, Color]:
@@ -295,6 +531,9 @@ class Maze:
         Returns the colors used to display the maze.
 
         Used for UI.
+
+        Args:
+            none (None):
 
         Returns:
             colors (Tuple): Colors

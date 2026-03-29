@@ -14,13 +14,36 @@ from ..enums import Color
 
 
 class MenuNotFoundError(BaseException):
+    """
+    The MenuNotFoundError.
+
+    Inherits from BaseException. It is only raised when the InputHandler
+    cannot find the requested menu.
+    """
     def __init__(self, menu: str) -> None:
+        """
+        Raises a MenuNotFoundError.
+
+        Used when a requested menu canont be found.
+
+        Args:
+            menu (str): The requested menu.
+
+        Returns:
+            none (None):
+        """
         super().__init__(f"Cannot go to menu \"{menu}\"")
 
 # --- CLASSES -----------------------------------------------------------------
 
 
 class InputHandler:
+    """
+    The InputHandler class.
+
+    It contains all logic related to user input. It should not be instantiated
+    as its own object.
+    """
     __menus: Dict[str, BaseMenu] = {
         "Main": MainMenu("Main Menu", [
             f"1 ║ {colorize('GENERATE MAZE', Color.WHITE)}",
@@ -73,6 +96,21 @@ class InputHandler:
 
     @classmethod
     def goto(cls, menu: str) -> None:
+        """
+        Goes to a menu.
+
+        If the requested menu is found, sets that menu to be the active one.
+        Otherwise raises a MenuNotFoundError.
+
+        Args:
+            menu (str): The menu to go to.
+
+        Returns:
+            none (None):
+
+        Raises:
+            MenuNotFoundError
+        """
         if not isinstance(cls.__opened, BaseMenu):
             raise TypeError("Opened menu must be a valid Menu object")
         m: BaseMenu | None = cls.__menus.get(menu)
@@ -83,18 +121,61 @@ class InputHandler:
 
     @classmethod
     def display(cls) -> None:
+        """
+        Displays the currently opened menu.
+
+        If the opened menu is not a menu, raises a TypeError, otherwise
+        displays the menu on the terminal.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+
+        Raises:
+            TypeError
+        """
         if not isinstance(cls.__opened, BaseMenu):
             raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.display()
 
     @classmethod
     def prompt(cls) -> str:
+        """
+        Prompts the user for an option.
+
+        If the opened menu is not a menu, raises a TypeError, otherwise
+        prompts the user.
+
+        Args:
+            none (None):
+
+        Returns:
+            none (None):
+
+        Raises:
+            TypeError
+        """
         if not isinstance(cls.__opened, BaseMenu):
             raise TypeError("Opened menu must be a valid Menu object")
         return cls.__opened.prompt()
 
     @classmethod
     def display_error(cls, msg: str | None = None) -> None:
+        """
+        Display an error message on the terminal.
+
+        Errors are always displays on top of menus in red. They are used to
+        warn the user that their input was not valid. This is more of a
+        notice than a real error that needs to be catched.
+
+        Args:
+            msg (str | None): Displays the error message. Default if none.
+
+        Returns:
+            none (None):
+        """
         if not msg:
             msg = "INVALID OPTION. PLEASE CHOOSE A VALID OPTION"
         err: str = """╔═════════════════════════════════════════════════════╗
@@ -113,18 +194,61 @@ class InputHandler:
 
     @classmethod
     def set_opened_name(cls, name: str) -> None:
+        """
+        Sets the name of the opened menu.
+
+        If the opened menu is not a menu, raises a TypeError, otherwise
+        sets a new title to the menu.
+
+        Args:
+            name (str): The new title of the menu.
+
+        Returns:
+            none (None):
+
+        Raises:
+            TypeError
+        """
         if not isinstance(cls.__opened, BaseMenu):
             raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.set_name(name)
 
     @classmethod
     def change_options(cls, options: List[str]) -> None:
+        """
+        Changes the options of a menu.
+
+        If the opened menu is not a menu, raises a TypeError, otherwise
+        changes the options of the menu to the provided ones. Mostly used
+        to update the color of texts in menus.
+
+        Args:
+            options (List[str]): The new options.
+
+        Returns:
+            none (None):
+
+        Raises:
+            TypeError
+        """
         if not isinstance(cls.__opened, BaseMenu):
             raise TypeError("Opened menu must be a valid Menu object")
         cls.__opened.change_options(options)
 
     @classmethod
     def change_value(cls, msg: str | None = None) -> int | None:
+        """
+        Display an input field on the terminal.
+
+        Prompts the user with an input field, inviting them to enter a value.
+        It is mostly used while changing the configuration of the maze.
+
+        Args:
+            msg (str | None): The input message. Default if none.
+
+        Returns:
+            val (int | None): The value entered by the user. None if invalid.
+        """
         if not msg:
             msg = "NEW VALUE:"
         prmt: str = """╔═════════════════════════════════════════════════════╗

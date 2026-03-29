@@ -8,9 +8,23 @@ import sys
 
 
 class InvalidConfiguration(Exception):
-    """Custom Exception for invalid configurations."""
+    """
+    Custom Exception for invalid configurations.
+
+    Raised when an invalid configuration is parsed.
+    """
     def __init__(self, args: str) -> None:
-        """Returns a new InvalidConfiguration exception."""
+        """
+        Returns a new InvalidConfiguration exception.
+
+        Raised when the config is not valid.
+
+        Args:
+            args (str): The error message.
+
+        Returns:
+            none (None):
+        """
         super().__init__(args)
 
 
