@@ -134,7 +134,7 @@ def move_left(amt: int) -> None:
         amt (int): Move X times.
 
     Returns:
-        None (None):
+        none (None):
     """
     stdout.write(f"\033[{amt}D\033[0")
 
@@ -147,7 +147,7 @@ def move_right(amt: int) -> None:
         amt (int): Move X times.
 
     Returns:
-        None (None):
+        none (None):
     """
     stdout.write(f"\033[{amt}C\033[0")
 
@@ -160,7 +160,7 @@ def move_up(amt: int) -> None:
         amt (int): Move X times.
 
     Returns:
-        None (None):
+        none (None):
     """
     stdout.write(f"\033[{amt}A\033[0")
 
@@ -173,7 +173,7 @@ def move_down(amt: int) -> None:
         amt (int): Move X times.
 
     Returns:
-        None (None):
+        none (None):
     """
     stdout.write(f"\033[{amt}B\033[0")
 
@@ -186,7 +186,7 @@ def move_to(x: int, y: int) -> None:
         amt (int): Move X times.
 
     Returns:
-        None (None):
+        none (None):
     """
     stdout.write(f"\033[{y};{x}H\033[0")
     stdout.write("m")

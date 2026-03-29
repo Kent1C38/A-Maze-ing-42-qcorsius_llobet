@@ -221,9 +221,11 @@ class Maze:
             }[f])
 
             if self.__anim_maze and not path_solve:
-                self.__visualizer.crawl(self.get()[y][x].get_active_walls(),
-                                        x, y, self.__config.width,
-                                        self.__config.height)
+                walls: int = self.get()[y][x].get_active_walls()
+
+                self.__visualizer.animate_maze(walls, x, y,
+                                               self.__config.width,
+                                               self.__config.height)
             self.crawl(nx, ny, rng, path_solve)
         return True
 

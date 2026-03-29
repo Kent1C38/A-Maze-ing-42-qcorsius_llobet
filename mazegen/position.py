@@ -66,7 +66,7 @@ class Position(BaseModel):
         Returns the coordinates of the Position as a tuple.
 
         Args:
-            None (None):
+            none (None):
 
         Returns:
             coordinates (tuple[int, int]): The coordinates of the Position.
@@ -78,7 +78,7 @@ class Position(BaseModel):
         To format printing.
 
         Args:
-            None (None):
+            none (None):
 
         Returns:
             str (str): The formatted string.

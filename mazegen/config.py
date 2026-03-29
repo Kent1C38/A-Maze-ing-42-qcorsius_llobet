@@ -53,7 +53,7 @@ class Configuration(BaseModel):
         is correct or not and if the entry and exit are on the 42 logo.
 
         Args:
-            None (None):
+            none (None):
 
         Returns:
             config (Configuration):

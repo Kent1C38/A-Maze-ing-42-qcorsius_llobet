@@ -6,8 +6,30 @@ import heapq
 
 
 class Node:
+    """
+    The Node class.
+
+    Nodes are primarily used for the solver algorithm, which in our case is
+    A*. It is easier to work with nodes than to directly use the cell structure
+    of our maze, as it is not very compatible with the algorithm.
+    """
     def __init__(self, x: int, y: int, cost_from_start: int,
                  goal: Position) -> None:
+        """
+        Initializes a new Node object.
+
+        Creates, initializes and returns a new Node object. Nodes are primarily
+        used for the A* algorithm.
+
+        Args:
+            x (int): The X coordinate of the node.
+            y (int): The Y cooddinate of the node.
+            cost_from_start (int): The distance between the node and the start.
+            goal (Position): The coordinates of the end goal.
+
+        Returns:
+            none (None):
+        """
         self.coords = Position(x=x, y=y)
         self.cost_from_start = cost_from_start
         self.estimated_distance = self.coords.heuristic(goal)
@@ -15,6 +37,17 @@ class Node:
         self.parent: Node | None = None
 
     def set_parent(self, parent: "Node") -> None:
+        """
+        Sets the parent of the node.
+
+        Used for the A* algorithm.
+
+        Args:
+            parent (Node): The node to parent itself to.
+
+        Returns:
+            none (None):
+        """
         self.parent = parent
 
     @property
@@ -28,6 +61,18 @@ class Node:
 
 def get_valid_neighbors(maze: list[list[Cell]],
                         position: Position) -> list[Position]:
+    """
+    Checks for neighbors cells.
+
+    This is used to check whether the cells nearby can be accessed or not.
+
+    Args:
+        maze (list[list[Cell]]): The cells of the maze.
+        position (Position): The coordinates of cell to perform the check on.
+
+    Returns:
+        valid (list[Position]): The valid cells.
+    """
     neighbours = []
     for direction in [f for f in Facing if not
                       maze[position.y][position.x].wall_request(f)]:
@@ -40,6 +85,22 @@ def get_valid_neighbors(maze: list[list[Cell]],
 
 def a_star(maze: list[list[Cell]], start: Position,
            goal: Position) -> str | None:
+    """
+    The pathfinding algorithm to solve the maze.
+
+    It takes all maze cells and checks for the distance between the cells and
+    the exit. By computing this distance and the distance needed to go to
+    said cell, it will choose the path with the least distance, thus finding
+    the shortest path to the exit.
+
+    Args:
+        maze (list[list[Cell]]): Cells of the maze.
+        start (Position): The coordinates of the entry point.
+        goal (Position): The coordinates of the exit point.
+
+    Returns:
+        path (str | None): Returns the path if solved, None otherwise.
+    """
     start_node = Node(start.x, start.y, 0, goal)
 
     counter = 0
@@ -95,6 +156,15 @@ def a_star(maze: list[list[Cell]], start: Position,
 
 
 def reconstruct_path(goal_node: Node) -> str | None:
+    """
+    Returns the full path to the exit node.
+
+    Args:
+        goal_node (None): The node to reach.
+
+    Returns:
+        path (str | None): Returns str if path is valid, None otherwise.
+    """
     path = ""
     current = goal_node
 

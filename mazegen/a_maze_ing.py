@@ -21,7 +21,7 @@ def change_config_display(config: Configuration) -> None:
         config (Configuration): The configuration to take the values from.
 
     Returns:
-        None (None):
+        none (None):
     """
     enx: int = config.entry_pos.x
     eny: int = config.entry_pos.y
@@ -60,7 +60,7 @@ def change_anim_display(maze: bool, path: bool) -> None:
         path (bool): The animation state of the path.
 
     Returns:
-        None (None):
+        none (None):
     """
     on: Color = Color.GREEN
     off: Color = Color.RED
@@ -74,7 +74,7 @@ def change_anim_display(maze: bool, path: bool) -> None:
     ])
 
 
-def change_color_display(colors: Tuple) -> None:
+def change_color_display(cs: Tuple[Color, Color, Color, Color, Color]) -> None:
     """
     Changes the color menu.
 
@@ -82,12 +82,12 @@ def change_color_display(colors: Tuple) -> None:
     updates the UI according to those.
 
     Args:
-        colors (Tuple): The colors of the maze.
+        cs (Tuple[Color, Color, Color, Color, Color]): The colors of the maze.
 
     Returns:
-        None (None):
+        none (None):
     """
-    maze, path, entry, ex, ft = colors
+    maze, path, entry, ex, ft = cs
 
     InputHandler.change_options([
         f"1 ║ {colorize('WALLS', maze)}",
@@ -119,7 +119,7 @@ def loop(lab: Maze) -> None:
         lab (Maze): The maze object.
 
     Returns:
-        None (None):
+        none (None):
     """
     prompt: str
     err: bool = False
@@ -304,6 +304,10 @@ def loop(lab: Maze) -> None:
                             err = True
                             err_msg = "ENTRY CANNOT BE OFF BOUNDS"
                             continue
+                        if x == conf.exit_pos.x and y == conf.exit_pos.y:
+                            err = True
+                            err_msg = "ENTRY AND EXIT CANNOT OVERLAP"
+                            continue
                         if (x, y) in get_42logo_cells(conf.width, conf.height):
                             err = True
                             err_msg = "ENTRY CANNOT BE ON 42 LOGO"
@@ -331,6 +335,10 @@ def loop(lab: Maze) -> None:
                         if y < 0 or y > conf.height - 1:
                             err = True
                             err_msg = "EXIT CANNOT BE OFF BOUNDS"
+                            continue
+                        if x == conf.entry_pos.x and y == conf.entry_pos.y:
+                            err = True
+                            err_msg = "ENTRY AND EXIT CANNOT OVERLAP"
                             continue
                         if (x, y) in get_42logo_cells(conf.width, conf.height):
                             err = True
@@ -367,10 +375,10 @@ def run() -> None:
     loop.
 
     Args:
-        None (None):
+        none (None):
 
     Returns:
-        None (None):
+        none (None):
     """
     if len(argv) <= 1:
         print(f"Usage: python3 {argv[0]} <config file path>")
