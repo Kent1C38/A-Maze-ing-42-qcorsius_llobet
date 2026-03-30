@@ -36,8 +36,11 @@ def change_config_display(config: Configuration) -> None:
     exit_label: str = colorize(f"EXIT: [{exx}, {exy}]", Color.WHITE)
     perfect: str = colorize("PERFECT", config.perfect and g or r)
     seed: str = colorize(f"SEED: {config.seed}", Color.WHITE)
+    msg: str = colorize("CHANGES WILL APPLY NEXT GEN", Color.YELLOW)
 
     InputHandler.change_options([
+        f"  ║ {msg}",
+        f"{colorize('', Color.WHITE)}  ║",
         f"1 ║ {width}",
         f"2 ║ {height}",
         f"3 ║ {entry}",

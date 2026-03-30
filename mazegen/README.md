@@ -20,3 +20,7 @@ The library contains all the core logic related to maze generation and path
 generation.
 
 Once installed, you can import it with `import mazegen`.
+
+When changing the maze configuration in the TUI, any changes will be applied on
+the next generation of the maze. Changing setting such as the seed only applies
+to the next generation, not for all following generations.

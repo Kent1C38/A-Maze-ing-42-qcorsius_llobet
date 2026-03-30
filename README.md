@@ -67,6 +67,10 @@ commands `make lint` and `make lint-strict` to execute them.
 Finally, once you are done working with the package and you no longer need it,
 you can run `make clean`.
 
+When changing the maze configuration in the TUI, any changes will be applied on
+the next generation of the maze. Changing setting such as the seed only applies
+to the next generation, not for all following generations.
+
 
 ### LIBRARY
 

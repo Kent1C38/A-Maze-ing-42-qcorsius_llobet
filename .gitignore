@@ -4,3 +4,5 @@
 .gitignore
 .environment
 *.lock
+*.txt
+!config.txt
