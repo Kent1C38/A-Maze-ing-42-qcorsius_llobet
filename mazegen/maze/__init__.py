@@ -21,6 +21,7 @@ class Maze:
     solving algorithms, to exporting it as a hexadecimal representation of its
     walls.
     """
+
     def __init__(self, config: Configuration) -> None:
         """
         Initializes a new Maze object.
@@ -283,6 +284,16 @@ class Maze:
             )
             self.__visualizer.animate_path()
         stdout.flush()
+
+        with open(self.__config.output_file, "w") as o_file:
+            o_file.write(self.convert_to_hex_str())
+            o_file.write("\n")
+            entry = self.__config.entry_pos
+            o_file.write(f"\n{entry.x},{entry.y}")
+            exitt = self.__config.exit_pos
+            o_file.write(f"\n{exitt.x},{exitt.y}")
+            o_file.write("\n" + path)
+
         return True
 
     def crawl(self, x: int, y: int, rng: Random,
