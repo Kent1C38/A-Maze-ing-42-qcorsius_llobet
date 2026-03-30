@@ -263,6 +263,9 @@ class Maze:
         self.__visualizer.add_walls(self.convert_to_hex_str())
         path = a_star(self.get(), self.__config.entry_pos,
                       self.__config.exit_pos)
+
+        if not path:
+            return False
         if invert_solve:
             self.__solved = not self.__solved
         if self.__solved and path and not self.__anim_path:
