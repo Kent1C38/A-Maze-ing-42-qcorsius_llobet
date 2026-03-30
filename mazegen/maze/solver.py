@@ -1,5 +1,3 @@
-from ..maze import Maze
-from ..config import Configuration
 from ..position import Position
 from .cell import Cell, Facing
 import heapq
@@ -183,12 +181,3 @@ def reconstruct_path(goal_node: Node) -> str | None:
         current = current.parent
 
     return path[::-1]
-
-
-if __name__ == "__main__":
-    maze = Maze(Configuration.new("config.txt"))
-    maze.generate()
-    maze.visualize()
-    print("\n"*3)
-    print(a_star(maze.get(),
-                 maze.get_config().entry_pos, maze.get_config().exit_pos))
